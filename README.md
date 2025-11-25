@@ -1,6 +1,6 @@
 # Lottery Smart Contract
 ## Contributors
-**Name**: Christopher Pawlus | **Email**: 
+**Name**: Christopher Pawlus | **Email**: christopher.pawlus99@myhunter.cuny.edu
 
 **Name**: Anthony Lau | **Email**: anthony.lau16@login.cuny.edu
 
