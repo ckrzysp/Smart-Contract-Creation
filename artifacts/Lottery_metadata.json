@@ -127,6 +127,13 @@
 			},
 			{
 				"inputs": [],
+				"name": "start",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "ticketCost",
 				"outputs": [
 					{
@@ -192,11 +199,11 @@
 			]
 		},
 		"contract/Lottery.sol": {
-			"keccak256": "0x9c9e70a7de1ba8983285d24d3e8be99f3b9e7cdc135cc0722e6e9a2bbcea30e9",
+			"keccak256": "0x912057415c5a31593477fc23bdf4ce54de5447662d8031fe5ac3372b40e53c21",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://b6ca31e37e5703557a7524b35f7b0b5e00e5ad3752918193c7697a88a1ebb925",
-				"dweb:/ipfs/QmU2xphpTSTurSozCQcusfgXUeqoqPmtgdkoNKs7zho3Cv"
+				"bzz-raw://408b100a099056bfe47f5d30bbeaffeca2a598ec137bf974ad40dc5233607877",
+				"dweb:/ipfs/QmNnpjx3v4GZQEaLskdwpAfRmfD1xvX74gsXs5b4YLU2Hz"
 			]
 		}
 	},

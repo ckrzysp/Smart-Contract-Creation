@@ -41,12 +41,19 @@ contract Lottery {
         participants.push(msg.sender);
     }
 
+    function start() public onlyHost {
+        address winnerAddress = findWinner();
+
+        // TODO: implement payment here
+        //  - Anthony
+    }
+
     /*  FINISH
     *   findWinner
     *   Generates random number to select from participants list and return winner
     */
     function findWinner() private returns (address) {
-        // Get random participant
+        // Get random participant using chainlink VRFConsumerBase
 
         return host;
     }
