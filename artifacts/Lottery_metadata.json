@@ -6,18 +6,94 @@
 	"output": {
 		"abi": [
 			{
-				"inputs": [],
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "min_",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256",
+						"name": "max_",
+						"type": "uint256"
+					}
+				],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "uint256",
+						"name": "num",
+						"type": "uint256"
+					}
+				],
+				"name": "number",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "prtcpt",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "alert",
+						"type": "string"
+					}
+				],
+				"name": "participantJoined",
+				"type": "event"
 			},
 			{
 				"inputs": [],
 				"name": "host",
 				"outputs": [
 					{
-						"internalType": "address",
+						"internalType": "address payable",
 						"name": "",
 						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "joinLottery",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "max",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "min",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -28,9 +104,22 @@
 				"name": "monetaryPrize",
 				"outputs": [
 					{
-						"internalType": "int64",
+						"internalType": "uint64",
 						"name": "",
-						"type": "int64"
+						"type": "uint64"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "randomResult",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
 					}
 				],
 				"stateMutability": "view",
@@ -41,9 +130,9 @@
 				"name": "ticketCost",
 				"outputs": [
 					{
-						"internalType": "int64",
+						"internalType": "uint64",
 						"name": "",
-						"type": "int64"
+						"type": "uint64"
 					}
 				],
 				"stateMutability": "view",
@@ -64,7 +153,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contract/lottery.sol": "Lottery"
+			"contract/Lottery.sol": "Lottery"
 		},
 		"evmVersion": "prague",
 		"libraries": {},
@@ -78,20 +167,36 @@
 		"remappings": []
 	},
 	"sources": {
-		"contract/lottery.sol": {
-			"keccak256": "0xad610f6ecc90290b9f641b7e223561186177c5dabaee28bebecd3922281223d2",
+		"@chainlink/contracts/src/v0.8/VRFConsumerBase.sol": {
+			"keccak256": "0xff9e7d773545a1a5d73106e72bfb429da79c1cc4d893fb62051df801d2e61469",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://f5765a090cf1a46b5b26708c4d772740789c87bc16f602699703c89618127696",
-				"dweb:/ipfs/QmanCQQR4UNyZBxXgMu8XSjhKw6L91stz8xHPBHTkw76JZ"
+				"bzz-raw://68ff9557dad6da8108073dadcbfe5cd1f45106c2f890443eacd3bf8d59955d4e",
+				"dweb:/ipfs/QmSKYkP8wNX7MKYrCroFps62gdxEwwrZwsz4RLc6XzNkxi"
 			]
 		},
-		"hardhat/console.sol": {
-			"keccak256": "0x7434453e6d3b7d0e5d0eb7846ffdbc27f0ccf3b163591263739b628074dc103a",
+		"@chainlink/contracts/src/v0.8/VRFRequestIDBase.sol": {
+			"keccak256": "0x2bf1168e8fe548fa990e0aeaf89ef90680f80aa31eeaf901f485df60de51d51b",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://49355f780520494d1d5a0f01858385e51bb5280ce0ecfb960f16995065dca395",
-				"dweb:/ipfs/QmSwJ6C5QLz6xKeQZS8wbwjU1KxRFTYfwbGmtzisd5sRW4"
+				"bzz-raw://79c72d66deaa4b0f251f3f0817f45ebceb71f5b4f94a86ac0e586de99f5af2b6",
+				"dweb:/ipfs/QmcHkApHm5CAynjajcCUYppaKJ9sNWGZTEcSs4tUK8B5K5"
+			]
+		},
+		"@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol": {
+			"keccak256": "0xc7d7cd730d36825485ef4107d93c3ff18b9f3a5a00ea3d5988ba9a0bd70b10c5",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://8cb1064885ecbcd9c3adba779e190cb4a538e5d4d15aeccb67d3376bdffc94bd",
+				"dweb:/ipfs/QmcQHK6ewve7tFi4XXK65JthQg4kQzApQikWcURJjGt4iQ"
+			]
+		},
+		"contract/Lottery.sol": {
+			"keccak256": "0x9c9e70a7de1ba8983285d24d3e8be99f3b9e7cdc135cc0722e6e9a2bbcea30e9",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://b6ca31e37e5703557a7524b35f7b0b5e00e5ad3752918193c7697a88a1ebb925",
+				"dweb:/ipfs/QmU2xphpTSTurSozCQcusfgXUeqoqPmtgdkoNKs7zho3Cv"
 			]
 		}
 	},

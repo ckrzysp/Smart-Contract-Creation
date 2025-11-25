@@ -6,7 +6,7 @@ import "@chainlink/contracts/src/v0.8/VRFConsumerBase.sol";
 contract Lottery {
     /// Essential variables for the lottery
     address[] participants;
-    address public host;
+    address payable public host;
     uint64 public constant monetaryPrize = 5 ether; 
     uint64 public ticketCost = 0.015 ether;
     event participantJoined(address prtcpt, string alert);
@@ -20,9 +20,11 @@ contract Lottery {
     constructor(uint256 min_, uint256 max_) {
         // User who deployed the contract
         host = payable(msg.sender);
+        min = min_;
+        max = max_;
     }
 
-    modifier hostPerm() {
+    modifier onlyHost() {
         require(msg.sender == host, "You are not the host.");
         _;
     }
@@ -34,29 +36,36 @@ contract Lottery {
     */
     function joinLottery() public payable {
         require(msg.value == ticketCost, "Wrong Amount.");
+        require(participants.length < max, "This lottery is full.");
+        
         participants.push(msg.sender);
     }
+
+    /*  FINISH
+    *   findWinner
+    *   Generates random number to select from participants list and return winner
+    */
+    function findWinner() private returns (address) {
+        // Get random participant
+
+        return host;
+    }
+
 
     /*
     *   getParticipant() 
     *   Get User in lottery
     */
-    function getParticipant(address user) public view returns (address) { 
+    function getParticipant(address user) private view returns (address) { 
         address found = host;
-        for(uint64 i = 0; i < participants.length; i++) {
-            if(user == participants[i]) {
+
+        for (uint64 i = 0; i < participants.length; i++) {
+            if (user == participants[i]) {
                 found = participants[i];
                 return found;
             }
         }
-        return host;
-    }
 
-    /*  FINISH
-    *   findWinnerAndPay
-    *   Generates random number to select from participants list and return winner
-    */
-    function findWinnerAndPay() public returns (hostPerm) {
         return host;
     }
 }
