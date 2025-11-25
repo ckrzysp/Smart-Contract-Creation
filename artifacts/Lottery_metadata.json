@@ -55,6 +55,45 @@
 			},
 			{
 				"inputs": [],
+				"name": "destroy",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "findWinnerAndPay",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "getParticipant",
+				"outputs": [
+					{
+						"internalType": "address",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
 				"name": "host",
 				"outputs": [
 					{
@@ -127,13 +166,6 @@
 			},
 			{
 				"inputs": [],
-				"name": "start",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
-			},
-			{
-				"inputs": [],
 				"name": "ticketCost",
 				"outputs": [
 					{
@@ -160,7 +192,7 @@
 	},
 	"settings": {
 		"compilationTarget": {
-			"contract/Lottery.sol": "Lottery"
+			"contract/lottery.sol": "Lottery"
 		},
 		"evmVersion": "prague",
 		"libraries": {},
@@ -198,12 +230,12 @@
 				"dweb:/ipfs/QmcQHK6ewve7tFi4XXK65JthQg4kQzApQikWcURJjGt4iQ"
 			]
 		},
-		"contract/Lottery.sol": {
-			"keccak256": "0x912057415c5a31593477fc23bdf4ce54de5447662d8031fe5ac3372b40e53c21",
+		"contract/lottery.sol": {
+			"keccak256": "0x9d0df766a2b17884581256fff574751001c2a5411719013bc695d9f46818a9a3",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://408b100a099056bfe47f5d30bbeaffeca2a598ec137bf974ad40dc5233607877",
-				"dweb:/ipfs/QmNnpjx3v4GZQEaLskdwpAfRmfD1xvX74gsXs5b4YLU2Hz"
+				"bzz-raw://86cc801a4d3cc171e26dbc253358b5113d035a9d934dbae59ffa1cc5bf9fd669",
+				"dweb:/ipfs/QmagBT6JhcQzyBVfNjAFMdrfirbxGYTFHTuztBzZWDJY2z"
 			]
 		}
 	},

@@ -10,7 +10,7 @@ contract Lottery {
     uint64 public constant monetaryPrize = 5 ether; 
     uint64 public ticketCost = 0.015 ether;
     event participantJoined(address prtcpt, string alert);
-    event number(uint256 num);
+    event number(uint256 num); // what is this for? - Anthony
     bytes32 internal keyHash;
     uint256 internal fee;
     uint256 public randomResult;
@@ -34,14 +34,16 @@ contract Lottery {
     *   Allows a user to join the lottery by buying a ticket
     *   Adds them to lottery basket
     */
-    function joinLottery() public payable {
+    function joinLottery() external payable {
         require(msg.value == ticketCost, "Wrong Amount.");
         require(participants.length < max, "This lottery is full.");
         
         participants.push(msg.sender);
+        emit participantJoined(msg.sender, "joined");
     }
 
-    function start() public onlyHost {
+    function start() external onlyHost {
+        require(participants.length >= min, "There are not enough people to start this lottery");
         address winnerAddress = findWinner();
 
         // TODO: implement payment here
@@ -54,6 +56,9 @@ contract Lottery {
     */
     function findWinner() private returns (address) {
         // Get random participant using chainlink VRFConsumerBase
+        // For reference, we should implement direct funding VRF paid by the lottery fee instead 
+        // of subscription funding since we're looking to get a random number once per contract.
+        // Docs: https://docs.chain.link/vrf/v2-5/overview/direct-funding
 
         return host;
     }
