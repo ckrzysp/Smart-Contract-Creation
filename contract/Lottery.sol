@@ -13,12 +13,14 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     uint64 public ticketCost = 0.015 ether;
     event participantJoined(address prtcpt, string alert);
     event number(uint256 num); // what is this for? - Anthony
+    event lotterWinner(address winner, uint64 prize);
     bytes32 internal keyHash;
     uint256 internal fee;
     uint256 public randomResult;
     uint256 public requestId;
     uint256 public min;
     uint256 public max;
+    bool public ended = false;
 
     constructor(
         uint256 min_,
@@ -42,6 +44,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
      *   Adds them to lottery basket
      */
     function joinLottery() external payable {
+        require(!ended, "Lottery has ended.");
         require(msg.value == ticketCost, "Wrong Amount.");
         require(participants.length < max, "This lottery is full.");
         require(
@@ -55,6 +58,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     }
 
     function start() external onlyHost {
+        require(!ended, "Lottery has already ended");
         require(
             participants.length >= min,
             "There are not enough people to start this lottery"
@@ -94,6 +98,8 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         randomResult = _randomWords[0];
         address winnerAddress = findWinner();
 
+        emit lotterWinner(winnerAddress, monetaryPrize);
+        ended = true;
         // TODO: implement payment here
         //  - Anthony
     }
