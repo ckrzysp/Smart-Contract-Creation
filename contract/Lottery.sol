@@ -10,10 +10,10 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     mapping(address => bool) public hasJoined; // Prevent same person joining twice
     address payable public host;
     uint64 public constant monetaryPrize = 5 ether;
+    uint256 amountToSend = monetaryPrize;
     uint64 public ticketCost = 0.015 ether;
-    event participantJoined(address prtcpt, string alert);
-    event number(uint256 num); // what is this for? - Anthony
-    event lotterWinner(address winner, uint64 prize);
+    event participantJoined(address prtcpt, string alert); // Event that alerts them when they join
+    event lotterWinner(address winner, uint64 prize); // Event that alerts when there is a lottery winner
     bytes32 internal keyHash;
     uint256 internal fee;
     uint256 public randomResult;
@@ -39,9 +39,9 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     }
 
     /*
-     *   joinLottery()
-     *   Allows a user to join the lottery by buying a ticket
-     *   Adds them to lottery basket
+     *  joinLottery
+     *  Allows a user to join the lottery by buying a ticket
+     *  Adds them to lottery basket
      */
     function joinLottery() external payable {
         require(!ended, "Lottery has ended.");
@@ -57,6 +57,11 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         emit participantJoined(msg.sender, "joined");
     }
 
+    /*  
+     *  findWinner
+     *  Only host can start the lottery, random number from VRF
+     *  Returns void, calculates random number
+     */
     function start() external onlyHost {
         require(!ended, "Lottery has already ended");
         require(
@@ -72,9 +77,10 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         (requestId, ) = requestRandomness(100000, 3, 1, extraArgs);
     }
 
-    /*  FINISH
-     *   findWinner
-     *   Generates random number to select from participants list and return winner
+    /*  
+     *  findWinner
+     *  Generates random number to select from participants list and return winner
+     *  Returns winner
      */
     function findWinner() private view returns (address) {
         // Get random participant using chainlink VRFConsumerBase
@@ -87,26 +93,34 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         return participants[winnerIndex];
     }
 
-    // Chainlink VRF calls this function with the random number (callback)
+    /*
+     *  fulfillRandomWords
+     *  Chainlink VRF calls this function with the random number (callback)
+     *  Returns void, transfers money
+    */ 
     function fulfillRandomWords(
-        uint256 _requestId,
+        uint256 _requestId, 
         uint256[] memory _randomWords
     ) internal override {
-        require(_randomWords.length > 0, "No random words received");
-        require(participants.length > 0, "No participants");
+        require(_randomWords.length > 0, "No random words received.");
+        require(participants.length > 0, "No participants.");
 
         randomResult = _randomWords[0];
         address winnerAddress = findWinner();
 
         emit lotterWinner(winnerAddress, monetaryPrize);
         ended = true;
-        // TODO: implement payment here
-        //  - Anthony
+        
+        // Pay winner
+        require(msg.value >= amountToSend, "Failed to send prize amount.");
+        payable(winnerAddress).transfer(amountToSend);
+        amountToSend = 0;
     }
 
     /*
-     *   getParticipant()
+     *   getParticipant
      *   Get User in lottery
+     *   Returns participant
      */
     function getParticipant(address user) private view returns (address) {
         address found = host;
@@ -118,6 +132,6 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
             }
         }
 
-        return host;
+        return found;
     }
 }

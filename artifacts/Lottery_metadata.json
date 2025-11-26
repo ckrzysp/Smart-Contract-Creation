@@ -16,22 +16,49 @@
 						"internalType": "uint256",
 						"name": "max_",
 						"type": "uint256"
+					},
+					{
+						"internalType": "address",
+						"name": "vrfWrapper",
+						"type": "address"
 					}
 				],
 				"stateMutability": "nonpayable",
 				"type": "constructor"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "have",
+						"type": "address"
+					},
+					{
+						"internalType": "address",
+						"name": "want",
+						"type": "address"
+					}
+				],
+				"name": "OnlyVRFWrapperCanFulfill",
+				"type": "error"
+			},
+			{
 				"anonymous": false,
 				"inputs": [
 					{
 						"indexed": false,
-						"internalType": "uint256",
-						"name": "num",
-						"type": "uint256"
+						"internalType": "address",
+						"name": "winner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint64",
+						"name": "prize",
+						"type": "uint64"
 					}
 				],
-				"name": "number",
+				"name": "lotterWinner",
 				"type": "event"
 			},
 			{
@@ -55,38 +82,57 @@
 			},
 			{
 				"inputs": [],
-				"name": "destroy",
-				"outputs": [],
-				"stateMutability": "nonpayable",
+				"name": "ended",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
 				"inputs": [],
-				"name": "findWinnerAndPay",
+				"name": "getBalance",
 				"outputs": [
 					{
-						"internalType": "address",
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "getLinkToken",
+				"outputs": [
+					{
+						"internalType": "contract LinkTokenInterface",
 						"name": "",
 						"type": "address"
 					}
 				],
-				"stateMutability": "nonpayable",
+				"stateMutability": "view",
 				"type": "function"
 			},
 			{
 				"inputs": [
 					{
 						"internalType": "address",
-						"name": "user",
+						"name": "",
 						"type": "address"
 					}
 				],
-				"name": "getParticipant",
+				"name": "hasJoined",
 				"outputs": [
 					{
-						"internalType": "address",
+						"internalType": "bool",
 						"name": "",
-						"type": "address"
+						"type": "bool"
 					}
 				],
 				"stateMutability": "view",
@@ -98,6 +144,19 @@
 				"outputs": [
 					{
 						"internalType": "address payable",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "i_vrfV2PlusWrapper",
+				"outputs": [
+					{
+						"internalType": "contract IVRFV2PlusWrapper",
 						"name": "",
 						"type": "address"
 					}
@@ -165,6 +224,44 @@
 				"type": "function"
 			},
 			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_requestId",
+						"type": "uint256"
+					},
+					{
+						"internalType": "uint256[]",
+						"name": "_randomWords",
+						"type": "uint256[]"
+					}
+				],
+				"name": "rawFulfillRandomWords",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "requestId",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "start",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "ticketCost",
 				"outputs": [
@@ -185,14 +282,21 @@
 		},
 		"userdoc": {
 			"kind": "user",
-			"methods": {},
+			"methods": {
+				"getBalance()": {
+					"notice": "getBalance returns the native balance of the consumer contract"
+				},
+				"getLinkToken()": {
+					"notice": "getLinkToken returns the link token contract"
+				}
+			},
 			"notice": "Lottery with immutability.",
 			"version": 1
 		}
 	},
 	"settings": {
 		"compilationTarget": {
-			"contract/lottery.sol": "Lottery"
+			"contract/Lottery.sol": "Lottery"
 		},
 		"evmVersion": "prague",
 		"libraries": {},
@@ -206,36 +310,44 @@
 		"remappings": []
 	},
 	"sources": {
-		"@chainlink/contracts/src/v0.8/VRFConsumerBase.sol": {
-			"keccak256": "0xff9e7d773545a1a5d73106e72bfb429da79c1cc4d893fb62051df801d2e61469",
+		"@chainlink/contracts/src/v0.8/shared/interfaces/LinkTokenInterface.sol": {
+			"keccak256": "0xcee9303d524c29fefc346775ec0be31d134a5f14c990fe04961a9f516eb23ad5",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://68ff9557dad6da8108073dadcbfe5cd1f45106c2f890443eacd3bf8d59955d4e",
-				"dweb:/ipfs/QmSKYkP8wNX7MKYrCroFps62gdxEwwrZwsz4RLc6XzNkxi"
+				"bzz-raw://f8b8e522c3aa8d22f0c6c6e2ed0b0aee2a224a961099205e4d847129abecd496",
+				"dweb:/ipfs/QmRsTaN1CFJADHtBNsE9kJT8F4P8qVSggGHh3iXL5dDcmc"
 			]
 		},
-		"@chainlink/contracts/src/v0.8/VRFRequestIDBase.sol": {
-			"keccak256": "0x2bf1168e8fe548fa990e0aeaf89ef90680f80aa31eeaf901f485df60de51d51b",
+		"@chainlink/contracts/src/v0.8/vrf/dev/VRFV2PlusWrapperConsumerBase.sol": {
+			"keccak256": "0x49eef0f77dd5b06a6aeead7945d9a4d0948137dc228fe045e07f62e80a4c5aa2",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://79c72d66deaa4b0f251f3f0817f45ebceb71f5b4f94a86ac0e586de99f5af2b6",
-				"dweb:/ipfs/QmcHkApHm5CAynjajcCUYppaKJ9sNWGZTEcSs4tUK8B5K5"
+				"bzz-raw://b8aa31c59918c1b3f6d1f3aec72c53118ef1eb6d58007daaf067165946ef2486",
+				"dweb:/ipfs/QmPpp5ykgufVzcHxfu3orkiJKwczUfs3VXcjN1AvApAbSA"
 			]
 		},
-		"@chainlink/contracts/src/v0.8/interfaces/LinkTokenInterface.sol": {
-			"keccak256": "0xc7d7cd730d36825485ef4107d93c3ff18b9f3a5a00ea3d5988ba9a0bd70b10c5",
+		"@chainlink/contracts/src/v0.8/vrf/dev/interfaces/IVRFV2PlusWrapper.sol": {
+			"keccak256": "0x23a19b6fa394e21359d39d78a081ddaa68160cca4b8850afbec5843bd16a844f",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://8cb1064885ecbcd9c3adba779e190cb4a538e5d4d15aeccb67d3376bdffc94bd",
-				"dweb:/ipfs/QmcQHK6ewve7tFi4XXK65JthQg4kQzApQikWcURJjGt4iQ"
+				"bzz-raw://f545db93aff28a897f8df61834b05be9c2f96ae953263d8c1f6d5c6648c4f3a5",
+				"dweb:/ipfs/QmbwriSRDKrEYW2HqWN2YJjco5wMgr7NBc9yUaHwr2bifu"
 			]
 		},
-		"contract/lottery.sol": {
-			"keccak256": "0x9d0df766a2b17884581256fff574751001c2a5411719013bc695d9f46818a9a3",
+		"@chainlink/contracts/src/v0.8/vrf/dev/libraries/VRFV2PlusClient.sol": {
+			"keccak256": "0xb0b1a6f3f0d59aca5c805994d8f64c24f570c280422f976dbae20f8b5b24b47c",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://86cc801a4d3cc171e26dbc253358b5113d035a9d934dbae59ffa1cc5bf9fd669",
-				"dweb:/ipfs/QmagBT6JhcQzyBVfNjAFMdrfirbxGYTFHTuztBzZWDJY2z"
+				"bzz-raw://f50a9db38564469f443866bb1e8067f4f934616195afe282c00733d1c1cc7419",
+				"dweb:/ipfs/QmfKLv5z7KzxNKCZfH9wC9b4ukkXqz8w8HEqmJcYAvdREH"
+			]
+		},
+		"contract/Lottery.sol": {
+			"keccak256": "0x987d13319bb16907b9c2684ce334483091bd0d7f192519e7013a47714250de7e",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e092eddad7dd8c2c7c3759a4bb10b4723888e74c90c2fa2f7bd4e89bccfbfd73",
+				"dweb:/ipfs/QmdK9CdADRk1pvSQL1xWKLRkeZWj1HxJreqrrn6gT8bWNK"
 			]
 		}
 	},
