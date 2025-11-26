@@ -6,7 +6,7 @@
 
 **Name**: Marouane Hachemi Boumila | Email:
 
-**Name**: Mohammed Uddin | **Email**:
+**Name**: Mohammed Uddin | **Email**: mohammed.uddin614@myhunter.cuny.edu
 
 
 ## Purpose
