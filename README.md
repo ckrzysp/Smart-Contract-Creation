@@ -1,7 +1,7 @@
 # Lottery Smart Contract
 
 ## Contributors (alphabetical by last name)
-- **Marouane Hachemi Boumila** | Frontend / Integration | email not provided
+- **Marouane Hachemi Boumila** | Frontend / Integration | marouane.hachemiboumila50@myhunter.cuny.edu
 - **Anthony Lau** | Backend / Testing | anthony.lau16@login.cuny.edu
 - **Christopher Pawlus** | Project Lead / Contract Programmer | christopher.pawlus99@myhunter.cuny.edu
 - **Mohammed Uddin** | Smart Contract Lead | mohammed.uddin614@myhunter.cuny.edu
