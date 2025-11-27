@@ -144,5 +144,9 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         return hasJoined[user];
     }
 
+    /// Replaced the for loop in getParticipant with a direct mapping lookup. The old method got slower as more participants joined, so this keeps it fast regardless of size.
+
+
 }
+
 
