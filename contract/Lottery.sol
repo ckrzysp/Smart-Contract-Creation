@@ -134,4 +134,15 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
 
         return found;
     }
+
+    /// Checks if a user is signed up for the lottery.
+    /// Refactored from the original loop approach, which iterated over the entire participant array and would become inefficient as the number of participants grew.
+    /// Now uses the `hasJoined` mapping, which provides a direct lookup for constant-time access regardless of how many people are in the lottery.
+    /// @param user The address to check for participation.
+    /// @return bool Returns true if the user has joined, false otherwise.
+    function getParticipantStatus(address user) public view returns (bool) {
+        return hasJoined[user];
+    }
+
 }
+
