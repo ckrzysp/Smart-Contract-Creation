@@ -62,6 +62,8 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
      *  Only host can start the lottery, random number from VRF
      *  Returns void, calculates random number
      */
+
+    /*
     function start() external onlyHost {
         require(!ended, "Lottery has already ended");
         require(
@@ -69,7 +71,27 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
             "There are not enough people to start this lottery"
         );
         require(participants.length > 0, "No participants");
+    
+        // Request random number from Chainlink VRF v2.5 Direct Funding
+        bytes memory extraArgs = VRFV2PlusClient._argsToBytes(
+            VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
+        );
+        (requestId, ) = requestRandomness(100000, 3, 1, extraArgs);
+    }
+    */
 
+    function start() external onlyHost {
+        require(!ended, "Lottery has already ended");
+        require(
+            participants.length >= min,
+            "There are not enough people to start this lottery"
+        );
+        require(participants.length > 0, "No participants");
+        
+        // Added this line to check to make sure the contract has enough money to pay the winner
+        // Prevent lottery from starting without funds
+        require(address(this).balance >= monetaryPrize, "Insufficient contract balance for prize.");
+    
         // Request random number from Chainlink VRF v2.5 Direct Funding
         bytes memory extraArgs = VRFV2PlusClient._argsToBytes(
             VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
@@ -122,6 +144,8 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
      *   Get User in lottery
      *   Returns participant
      */
+
+    /*
     function getParticipant(address user) private view returns (address) {
         address found = host;
 
@@ -134,6 +158,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
 
         return found;
     }
+    */
 
     /// Checks if a user is signed up for the lottery.
     /// Refactored from the original loop approach, which iterated over the entire participant array and would become inefficient as the number of participants grew.
@@ -148,5 +173,6 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
 
 
 }
+
 
 
