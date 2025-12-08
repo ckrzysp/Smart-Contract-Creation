@@ -7,6 +7,19 @@
 /// ticket, pick a set of numbers, and the payout depends on how many numbers
 /// match the draw. This would make the system feel more like an actual lottery
 /// and give players clearer expectations.
+///
+/// -------------------------------------------------------------------------------
+///
+/// Additional Features or SUGGESTIONS:
+/// - Fixed draw intervals (daily, weekly) to create predictable and fair lottery rounds
+/// - Dynamic ticket numbers: instead of fixed numbers, ticket numbers could evolve slightly
+///   every block until purchase closes, adding unpredictability and strategic depth
+/// - Tiered payouts / prizes: full match = jackpot, partial match = smaller rewards,
+///   with optional bonus multipliers for rare combinations
+/// - Participation limits: cap the number of tickets per draw and per player to prevent abuse
+/// - Randomness improvements: enhancements beyond Chainlink VRF can address limitations
+///   such as cost, speed, or decentralization, providing more flexible or efficient solutions
+///
 /// -------------------------------------------------------------------------------
 
 // SPDX-License-Identifier: MIT
@@ -184,6 +197,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
 
 
 }
+
 
 
 
