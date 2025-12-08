@@ -1,3 +1,14 @@
+/// REFACTOR SUGGESTION:
+/// Right now the lottery is basically just an RNG that picks a random winner.
+/// Players are not choosing numbers or interacting with anything that resembles
+/// a real lottery.
+///
+/// We might want to shift toward a more traditional setup where users buy a
+/// ticket, pick a set of numbers, and the payout depends on how many numbers
+/// match the draw. This would make the system feel more like an actual lottery
+/// and give players clearer expectations.
+/// -------------------------------------------------------------------------------
+
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 import "@chainlink/contracts/src/v0.8/vrf/dev/VRFV2PlusWrapperConsumerBase.sol";
@@ -173,6 +184,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
 
 
 }
+
 
 
 
