@@ -242,27 +242,41 @@ contract Lottery is ILottery {
             "Block hash unavailable or too old."
         );
 
-        // A pseudo-random number using the block hash and the contract address.
-        // Adding the contract address makes it a bit harder for someone to guess the final value.
-        uint256 randomValue = uint256(
+        // Generate 5 random winning numbers (1-99) using blockhash
+        uint256 randomSeed = uint256(
             keccak256(abi.encodePacked(futureBlockHash, address(this)))
         );
 
-        // Picking a winner based on modulo math
-        address winnerAddress = participantAddresses[randomValue % participantAddresses.length];
+        uint8[5] memory winningNumbers;
+        for (uint256 i = 0; i < 5; i++) {
+            winningNumbers[i] = uint8((uint256(keccak256(abi.encodePacked(randomSeed, i))) % 99) + 1);
+        }
 
-        // Tell the chain who won (the front-ends and scripts rely on this)
-        emit lotterWinner(winnerAddress, uint64(prizePool));
+        // Get all players
+        uint256 numPlayers = participantAddresses.length;
+        Player[] memory players = new Player[](numPlayers);
+        for (uint256 i = 0; i < numPlayers; i++) {
+            players[i] = participantsToTickets[participantAddresses[i]];
+        }
+
+        // Find winners who matched the numbers
+        (address[] memory winners, uint256 amountPerWinner) = determinePrizes(
+            prizePool,
+            winningNumbers,
+            participantAddresses,
+            players
+        );
 
         // SAFETY: Lock the lottery so no second payout happens
         ended = true;
 
-        // EDGE CASE: Make sure the prize exists before sending
-        require(prizePool > 0, "No prize money set.");
-
-        // Send prize money to the winner
-        uint256 prize = prizePool;
-        payable(winnerAddress).transfer(prize);
+        // Pay all winners
+        if (winners.length > 0) {
+            for (uint256 i = 0; i < winners.length; i++) {
+                payable(winners[i]).transfer(amountPerWinner);
+                emit lotterWinner(winners[i], uint64(amountPerWinner));
+            }
+        }
 
         // Reset state for next round
         prizePool = 0;
