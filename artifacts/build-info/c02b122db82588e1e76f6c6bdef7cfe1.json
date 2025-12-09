@@ -1,0 +1,3049 @@
+{
+	"id": "c02b122db82588e1e76f6c6bdef7cfe1",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.30",
+	"solcLongVersion": "0.8.30+commit.73712a01",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"utils/Utils.sol": {
+				"content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\nimport \"contract/Player.sol\";\n\nfunction determinePrizes(\n    uint256 totalPrizePool,\n    uint8[5] calldata winningNumbers,\n    address[] calldata addresses,\n    Player[] calldata players\n) pure returns (address[] memory winners, uint256 winAmount) {\n    require(addresses.length == players.length, \"Length mismatch\");\n\n    uint256 totalJackpotWinners = 0;\n\n    // find all jackpot winners\n    for (uint256 i = 0; i < players.length; i++) {  // for each player\n        uint256 n = players[i].numberOfTickets;\n\n        for (uint256 j = 0; j < n; j++) {  // for each ticket the current player has\n            uint8[5] calldata ticket = players[i].ticketNumbers[j];\n\n            bool isJackpotWinner = true;\n            for (uint8 x = 0; x < 5; x++) {\n                if (ticket[x] != winningNumbers[x]) {\n                    isJackpotWinner = false;\n                    break;\n                }\n            }\n\n            if (isJackpotWinner) {\n                totalJackpotWinners += 1;\n            }\n        }\n    }\n\n    if (totalJackpotWinners == 0) {\n        return (new address[](0), 0);\n    }\n    \n    // Allocate winners with a fixed size\n    winners = new address[](totalJackpotWinners);\n    uint256 winnerIndex = 0;\n    uint256 share = totalPrizePool / totalJackpotWinners;\n\n    // Populate winners\n    for (uint256 i = 0; i < players.length; i++) {\n        uint256 n = players[i].numberOfTickets;\n\n        for (uint256 j = 0; j < n; j++) {\n            bool isJackpotWinner = true;\n\n            for (uint256 x = 0; x < 5; x++) {\n                if (players[i].ticketNumbers[x][j] != winningNumbers[x]) {\n                    isJackpotWinner = false;\n                    break;\n                }\n            }\n\n            if (isJackpotWinner) {\n                winners[winnerIndex] = addresses[i];\n                winnerIndex++;\n            }\n        }\n    }\n\n    return (winners, share);\n}"
+			},
+			"contract/Player.sol": {
+				"content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\nstruct Player {\n    uint8[5][] ticketNumbers;\n    bool hasJoined;\n    uint16 numberOfTickets;\n}"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": false,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"": [
+						"ast"
+					],
+					"*": [
+						"abi",
+						"metadata",
+						"devdoc",
+						"userdoc",
+						"storageLayout",
+						"evm.legacyAssembly",
+						"evm.bytecode",
+						"evm.deployedBytecode",
+						"evm.methodIdentifiers",
+						"evm.gasEstimates",
+						"evm.assembly"
+					]
+				}
+			},
+			"remappings": []
+		}
+	},
+	"output": {
+		"sources": {
+			"contract/Player.sol": {
+				"ast": {
+					"absolutePath": "contract/Player.sol",
+					"exportedSymbols": {
+						"Player": [
+							11
+						]
+					},
+					"id": 12,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 1,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".18"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "32:24:0"
+						},
+						{
+							"canonicalName": "Player",
+							"id": 11,
+							"members": [
+								{
+									"constant": false,
+									"id": 6,
+									"mutability": "mutable",
+									"name": "ticketNumbers",
+									"nameLocation": "89:13:0",
+									"nodeType": "VariableDeclaration",
+									"scope": 11,
+									"src": "78:24:0",
+									"stateVariable": false,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_array$_t_array$_t_uint8_$5_storage_$dyn_storage_ptr",
+										"typeString": "uint8[5][]"
+									},
+									"typeName": {
+										"baseType": {
+											"baseType": {
+												"id": 2,
+												"name": "uint8",
+												"nodeType": "ElementaryTypeName",
+												"src": "78:5:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint8",
+													"typeString": "uint8"
+												}
+											},
+											"id": 4,
+											"length": {
+												"hexValue": "35",
+												"id": 3,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": true,
+												"kind": "number",
+												"lValueRequested": false,
+												"nodeType": "Literal",
+												"src": "84:1:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_rational_5_by_1",
+													"typeString": "int_const 5"
+												},
+												"value": "5"
+											},
+											"nodeType": "ArrayTypeName",
+											"src": "78:8:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_array$_t_uint8_$5_storage_ptr",
+												"typeString": "uint8[5]"
+											}
+										},
+										"id": 5,
+										"nodeType": "ArrayTypeName",
+										"src": "78:10:0",
+										"typeDescriptions": {
+											"typeIdentifier": "t_array$_t_array$_t_uint8_$5_storage_$dyn_storage_ptr",
+											"typeString": "uint8[5][]"
+										}
+									},
+									"visibility": "internal"
+								},
+								{
+									"constant": false,
+									"id": 8,
+									"mutability": "mutable",
+									"name": "hasJoined",
+									"nameLocation": "113:9:0",
+									"nodeType": "VariableDeclaration",
+									"scope": 11,
+									"src": "108:14:0",
+									"stateVariable": false,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_bool",
+										"typeString": "bool"
+									},
+									"typeName": {
+										"id": 7,
+										"name": "bool",
+										"nodeType": "ElementaryTypeName",
+										"src": "108:4:0",
+										"typeDescriptions": {
+											"typeIdentifier": "t_bool",
+											"typeString": "bool"
+										}
+									},
+									"visibility": "internal"
+								},
+								{
+									"constant": false,
+									"id": 10,
+									"mutability": "mutable",
+									"name": "numberOfTickets",
+									"nameLocation": "135:15:0",
+									"nodeType": "VariableDeclaration",
+									"scope": 11,
+									"src": "128:22:0",
+									"stateVariable": false,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_uint16",
+										"typeString": "uint16"
+									},
+									"typeName": {
+										"id": 9,
+										"name": "uint16",
+										"nodeType": "ElementaryTypeName",
+										"src": "128:6:0",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint16",
+											"typeString": "uint16"
+										}
+									},
+									"visibility": "internal"
+								}
+							],
+							"name": "Player",
+							"nameLocation": "65:6:0",
+							"nodeType": "StructDefinition",
+							"scope": 12,
+							"src": "58:95:0",
+							"visibility": "public"
+						}
+					],
+					"src": "32:121:0"
+				},
+				"id": 0
+			},
+			"utils/Utils.sol": {
+				"ast": {
+					"absolutePath": "utils/Utils.sol",
+					"exportedSymbols": {
+						"Player": [
+							11
+						],
+						"determinePrizes": [
+							247
+						]
+					},
+					"id": 248,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 13,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".18"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "32:24:1"
+						},
+						{
+							"absolutePath": "contract/Player.sol",
+							"file": "contract/Player.sol",
+							"id": 14,
+							"nameLocation": "-1:-1:-1",
+							"nodeType": "ImportDirective",
+							"scope": 248,
+							"sourceUnit": 12,
+							"src": "58:29:1",
+							"symbolAliases": [],
+							"unitAlias": ""
+						},
+						{
+							"body": {
+								"id": 246,
+								"nodeType": "Block",
+								"src": "306:1646:1",
+								"statements": [
+									{
+										"expression": {
+											"arguments": [
+												{
+													"commonType": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													},
+													"id": 40,
+													"isConstant": false,
+													"isLValue": false,
+													"isPure": false,
+													"lValueRequested": false,
+													"leftExpression": {
+														"expression": {
+															"id": 36,
+															"name": "addresses",
+															"nodeType": "Identifier",
+															"overloadedDeclarations": [],
+															"referencedDeclaration": 23,
+															"src": "320:9:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+																"typeString": "address[] calldata"
+															}
+														},
+														"id": 37,
+														"isConstant": false,
+														"isLValue": false,
+														"isPure": false,
+														"lValueRequested": false,
+														"memberLocation": "330:6:1",
+														"memberName": "length",
+														"nodeType": "MemberAccess",
+														"src": "320:16:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														}
+													},
+													"nodeType": "BinaryOperation",
+													"operator": "==",
+													"rightExpression": {
+														"expression": {
+															"id": 38,
+															"name": "players",
+															"nodeType": "Identifier",
+															"overloadedDeclarations": [],
+															"referencedDeclaration": 27,
+															"src": "340:7:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_array$_t_struct$_Player_$11_calldata_ptr_$dyn_calldata_ptr",
+																"typeString": "struct Player calldata[] calldata"
+															}
+														},
+														"id": 39,
+														"isConstant": false,
+														"isLValue": false,
+														"isPure": false,
+														"lValueRequested": false,
+														"memberLocation": "348:6:1",
+														"memberName": "length",
+														"nodeType": "MemberAccess",
+														"src": "340:14:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														}
+													},
+													"src": "320:34:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_bool",
+														"typeString": "bool"
+													}
+												},
+												{
+													"hexValue": "4c656e677468206d69736d61746368",
+													"id": 41,
+													"isConstant": false,
+													"isLValue": false,
+													"isPure": true,
+													"kind": "string",
+													"lValueRequested": false,
+													"nodeType": "Literal",
+													"src": "356:17:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_stringliteral_bb46a6fe2ea6b18f462b236ffc808abf66026114a0bc6a6c72c11149e00d9ea8",
+														"typeString": "literal_string \"Length mismatch\""
+													},
+													"value": "Length mismatch"
+												}
+											],
+											"expression": {
+												"argumentTypes": [
+													{
+														"typeIdentifier": "t_bool",
+														"typeString": "bool"
+													},
+													{
+														"typeIdentifier": "t_stringliteral_bb46a6fe2ea6b18f462b236ffc808abf66026114a0bc6a6c72c11149e00d9ea8",
+														"typeString": "literal_string \"Length mismatch\""
+													}
+												],
+												"id": 35,
+												"name": "require",
+												"nodeType": "Identifier",
+												"overloadedDeclarations": [
+													4294967278,
+													4294967278,
+													4294967278
+												],
+												"referencedDeclaration": 4294967278,
+												"src": "312:7:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_function_require_pure$_t_bool_$_t_string_memory_ptr_$returns$__$",
+													"typeString": "function (bool,string memory) pure"
+												}
+											},
+											"id": 42,
+											"isConstant": false,
+											"isLValue": false,
+											"isPure": false,
+											"kind": "functionCall",
+											"lValueRequested": false,
+											"nameLocations": [],
+											"names": [],
+											"nodeType": "FunctionCall",
+											"src": "312:62:1",
+											"tryCall": false,
+											"typeDescriptions": {
+												"typeIdentifier": "t_tuple$__$",
+												"typeString": "tuple()"
+											}
+										},
+										"id": 43,
+										"nodeType": "ExpressionStatement",
+										"src": "312:62:1"
+									},
+									{
+										"assignments": [
+											45
+										],
+										"declarations": [
+											{
+												"constant": false,
+												"id": 45,
+												"mutability": "mutable",
+												"name": "totalJackpotWinners",
+												"nameLocation": "389:19:1",
+												"nodeType": "VariableDeclaration",
+												"scope": 246,
+												"src": "381:27:1",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 44,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "381:7:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"id": 47,
+										"initialValue": {
+											"hexValue": "30",
+											"id": 46,
+											"isConstant": false,
+											"isLValue": false,
+											"isPure": true,
+											"kind": "number",
+											"lValueRequested": false,
+											"nodeType": "Literal",
+											"src": "411:1:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_rational_0_by_1",
+												"typeString": "int_const 0"
+											},
+											"value": "0"
+										},
+										"nodeType": "VariableDeclarationStatement",
+										"src": "381:31:1"
+									},
+									{
+										"body": {
+											"id": 128,
+											"nodeType": "Block",
+											"src": "496:575:1",
+											"statements": [
+												{
+													"assignments": [
+														60
+													],
+													"declarations": [
+														{
+															"constant": false,
+															"id": 60,
+															"mutability": "mutable",
+															"name": "n",
+															"nameLocation": "534:1:1",
+															"nodeType": "VariableDeclaration",
+															"scope": 128,
+															"src": "526:9:1",
+															"stateVariable": false,
+															"storageLocation": "default",
+															"typeDescriptions": {
+																"typeIdentifier": "t_uint256",
+																"typeString": "uint256"
+															},
+															"typeName": {
+																"id": 59,
+																"name": "uint256",
+																"nodeType": "ElementaryTypeName",
+																"src": "526:7:1",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_uint256",
+																	"typeString": "uint256"
+																}
+															},
+															"visibility": "internal"
+														}
+													],
+													"id": 65,
+													"initialValue": {
+														"expression": {
+															"baseExpression": {
+																"id": 61,
+																"name": "players",
+																"nodeType": "Identifier",
+																"overloadedDeclarations": [],
+																"referencedDeclaration": 27,
+																"src": "538:7:1",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_array$_t_struct$_Player_$11_calldata_ptr_$dyn_calldata_ptr",
+																	"typeString": "struct Player calldata[] calldata"
+																}
+															},
+															"id": 63,
+															"indexExpression": {
+																"id": 62,
+																"name": "i",
+																"nodeType": "Identifier",
+																"overloadedDeclarations": [],
+																"referencedDeclaration": 49,
+																"src": "546:1:1",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_uint256",
+																	"typeString": "uint256"
+																}
+															},
+															"isConstant": false,
+															"isLValue": false,
+															"isPure": false,
+															"lValueRequested": false,
+															"nodeType": "IndexAccess",
+															"src": "538:10:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_struct$_Player_$11_calldata_ptr",
+																"typeString": "struct Player calldata"
+															}
+														},
+														"id": 64,
+														"isConstant": false,
+														"isLValue": false,
+														"isPure": false,
+														"lValueRequested": false,
+														"memberLocation": "549:15:1",
+														"memberName": "numberOfTickets",
+														"nodeType": "MemberAccess",
+														"referencedDeclaration": 10,
+														"src": "538:26:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint16",
+															"typeString": "uint16"
+														}
+													},
+													"nodeType": "VariableDeclarationStatement",
+													"src": "526:38:1"
+												},
+												{
+													"body": {
+														"id": 126,
+														"nodeType": "Block",
+														"src": "607:458:1",
+														"statements": [
+															{
+																"assignments": [
+																	81
+																],
+																"declarations": [
+																	{
+																		"constant": false,
+																		"id": 81,
+																		"mutability": "mutable",
+																		"name": "ticket",
+																		"nameLocation": "682:6:1",
+																		"nodeType": "VariableDeclaration",
+																		"scope": 126,
+																		"src": "664:24:1",
+																		"stateVariable": false,
+																		"storageLocation": "calldata",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_array$_t_uint8_$5_calldata_ptr",
+																			"typeString": "uint8[5]"
+																		},
+																		"typeName": {
+																			"baseType": {
+																				"id": 79,
+																				"name": "uint8",
+																				"nodeType": "ElementaryTypeName",
+																				"src": "664:5:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_uint8",
+																					"typeString": "uint8"
+																				}
+																			},
+																			"id": 80,
+																			"length": {
+																				"hexValue": "35",
+																				"id": 78,
+																				"isConstant": false,
+																				"isLValue": false,
+																				"isPure": true,
+																				"kind": "number",
+																				"lValueRequested": false,
+																				"nodeType": "Literal",
+																				"src": "670:1:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_rational_5_by_1",
+																					"typeString": "int_const 5"
+																				},
+																				"value": "5"
+																			},
+																			"nodeType": "ArrayTypeName",
+																			"src": "664:8:1",
+																			"typeDescriptions": {
+																				"typeIdentifier": "t_array$_t_uint8_$5_storage_ptr",
+																				"typeString": "uint8[5]"
+																			}
+																		},
+																		"visibility": "internal"
+																	}
+																],
+																"id": 88,
+																"initialValue": {
+																	"baseExpression": {
+																		"expression": {
+																			"baseExpression": {
+																				"id": 82,
+																				"name": "players",
+																				"nodeType": "Identifier",
+																				"overloadedDeclarations": [],
+																				"referencedDeclaration": 27,
+																				"src": "691:7:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_array$_t_struct$_Player_$11_calldata_ptr_$dyn_calldata_ptr",
+																					"typeString": "struct Player calldata[] calldata"
+																				}
+																			},
+																			"id": 84,
+																			"indexExpression": {
+																				"id": 83,
+																				"name": "i",
+																				"nodeType": "Identifier",
+																				"overloadedDeclarations": [],
+																				"referencedDeclaration": 49,
+																				"src": "699:1:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_uint256",
+																					"typeString": "uint256"
+																				}
+																			},
+																			"isConstant": false,
+																			"isLValue": false,
+																			"isPure": false,
+																			"lValueRequested": false,
+																			"nodeType": "IndexAccess",
+																			"src": "691:10:1",
+																			"typeDescriptions": {
+																				"typeIdentifier": "t_struct$_Player_$11_calldata_ptr",
+																				"typeString": "struct Player calldata"
+																			}
+																		},
+																		"id": 85,
+																		"isConstant": false,
+																		"isLValue": false,
+																		"isPure": false,
+																		"lValueRequested": false,
+																		"memberLocation": "702:13:1",
+																		"memberName": "ticketNumbers",
+																		"nodeType": "MemberAccess",
+																		"referencedDeclaration": 6,
+																		"src": "691:24:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_array$_t_array$_t_uint8_$5_calldata_ptr_$dyn_calldata_ptr",
+																			"typeString": "uint8[5] calldata[] calldata"
+																		}
+																	},
+																	"id": 87,
+																	"indexExpression": {
+																		"id": 86,
+																		"name": "j",
+																		"nodeType": "Identifier",
+																		"overloadedDeclarations": [],
+																		"referencedDeclaration": 67,
+																		"src": "716:1:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_uint256",
+																			"typeString": "uint256"
+																		}
+																	},
+																	"isConstant": false,
+																	"isLValue": false,
+																	"isPure": false,
+																	"lValueRequested": false,
+																	"nodeType": "IndexAccess",
+																	"src": "691:27:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_array$_t_uint8_$5_calldata_ptr",
+																		"typeString": "uint8[5] calldata"
+																	}
+																},
+																"nodeType": "VariableDeclarationStatement",
+																"src": "664:54:1"
+															},
+															{
+																"assignments": [
+																	90
+																],
+																"declarations": [
+																	{
+																		"constant": false,
+																		"id": 90,
+																		"mutability": "mutable",
+																		"name": "isJackpotWinner",
+																		"nameLocation": "738:15:1",
+																		"nodeType": "VariableDeclaration",
+																		"scope": 126,
+																		"src": "733:20:1",
+																		"stateVariable": false,
+																		"storageLocation": "default",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_bool",
+																			"typeString": "bool"
+																		},
+																		"typeName": {
+																			"id": 89,
+																			"name": "bool",
+																			"nodeType": "ElementaryTypeName",
+																			"src": "733:4:1",
+																			"typeDescriptions": {
+																				"typeIdentifier": "t_bool",
+																				"typeString": "bool"
+																			}
+																		},
+																		"visibility": "internal"
+																	}
+																],
+																"id": 92,
+																"initialValue": {
+																	"hexValue": "74727565",
+																	"id": 91,
+																	"isConstant": false,
+																	"isLValue": false,
+																	"isPure": true,
+																	"kind": "bool",
+																	"lValueRequested": false,
+																	"nodeType": "Literal",
+																	"src": "756:4:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_bool",
+																		"typeString": "bool"
+																	},
+																	"value": "true"
+																},
+																"nodeType": "VariableDeclarationStatement",
+																"src": "733:27:1"
+															},
+															{
+																"body": {
+																	"id": 117,
+																	"nodeType": "Block",
+																	"src": "804:159:1",
+																	"statements": [
+																		{
+																			"condition": {
+																				"commonType": {
+																					"typeIdentifier": "t_uint8",
+																					"typeString": "uint8"
+																				},
+																				"id": 109,
+																				"isConstant": false,
+																				"isLValue": false,
+																				"isPure": false,
+																				"lValueRequested": false,
+																				"leftExpression": {
+																					"baseExpression": {
+																						"id": 103,
+																						"name": "ticket",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 81,
+																						"src": "826:6:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_array$_t_uint8_$5_calldata_ptr",
+																							"typeString": "uint8[5] calldata"
+																						}
+																					},
+																					"id": 105,
+																					"indexExpression": {
+																						"id": 104,
+																						"name": "x",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 94,
+																						"src": "833:1:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_uint8",
+																							"typeString": "uint8"
+																						}
+																					},
+																					"isConstant": false,
+																					"isLValue": false,
+																					"isPure": false,
+																					"lValueRequested": false,
+																					"nodeType": "IndexAccess",
+																					"src": "826:9:1",
+																					"typeDescriptions": {
+																						"typeIdentifier": "t_uint8",
+																						"typeString": "uint8"
+																					}
+																				},
+																				"nodeType": "BinaryOperation",
+																				"operator": "!=",
+																				"rightExpression": {
+																					"baseExpression": {
+																						"id": 106,
+																						"name": "winningNumbers",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 20,
+																						"src": "839:14:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_array$_t_uint8_$5_calldata_ptr",
+																							"typeString": "uint8[5] calldata"
+																						}
+																					},
+																					"id": 108,
+																					"indexExpression": {
+																						"id": 107,
+																						"name": "x",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 94,
+																						"src": "854:1:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_uint8",
+																							"typeString": "uint8"
+																						}
+																					},
+																					"isConstant": false,
+																					"isLValue": false,
+																					"isPure": false,
+																					"lValueRequested": false,
+																					"nodeType": "IndexAccess",
+																					"src": "839:17:1",
+																					"typeDescriptions": {
+																						"typeIdentifier": "t_uint8",
+																						"typeString": "uint8"
+																					}
+																				},
+																				"src": "826:30:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_bool",
+																					"typeString": "bool"
+																				}
+																			},
+																			"id": 116,
+																			"nodeType": "IfStatement",
+																			"src": "822:127:1",
+																			"trueBody": {
+																				"id": 115,
+																				"nodeType": "Block",
+																				"src": "858:91:1",
+																				"statements": [
+																					{
+																						"expression": {
+																							"id": 112,
+																							"isConstant": false,
+																							"isLValue": false,
+																							"isPure": false,
+																							"lValueRequested": false,
+																							"leftHandSide": {
+																								"id": 110,
+																								"name": "isJackpotWinner",
+																								"nodeType": "Identifier",
+																								"overloadedDeclarations": [],
+																								"referencedDeclaration": 90,
+																								"src": "880:15:1",
+																								"typeDescriptions": {
+																									"typeIdentifier": "t_bool",
+																									"typeString": "bool"
+																								}
+																							},
+																							"nodeType": "Assignment",
+																							"operator": "=",
+																							"rightHandSide": {
+																								"hexValue": "66616c7365",
+																								"id": 111,
+																								"isConstant": false,
+																								"isLValue": false,
+																								"isPure": true,
+																								"kind": "bool",
+																								"lValueRequested": false,
+																								"nodeType": "Literal",
+																								"src": "898:5:1",
+																								"typeDescriptions": {
+																									"typeIdentifier": "t_bool",
+																									"typeString": "bool"
+																								},
+																								"value": "false"
+																							},
+																							"src": "880:23:1",
+																							"typeDescriptions": {
+																								"typeIdentifier": "t_bool",
+																								"typeString": "bool"
+																							}
+																						},
+																						"id": 113,
+																						"nodeType": "ExpressionStatement",
+																						"src": "880:23:1"
+																					},
+																					{
+																						"id": 114,
+																						"nodeType": "Break",
+																						"src": "925:5:1"
+																					}
+																				]
+																			}
+																		}
+																	]
+																},
+																"condition": {
+																	"commonType": {
+																		"typeIdentifier": "t_uint8",
+																		"typeString": "uint8"
+																	},
+																	"id": 99,
+																	"isConstant": false,
+																	"isLValue": false,
+																	"isPure": false,
+																	"lValueRequested": false,
+																	"leftExpression": {
+																		"id": 97,
+																		"name": "x",
+																		"nodeType": "Identifier",
+																		"overloadedDeclarations": [],
+																		"referencedDeclaration": 94,
+																		"src": "792:1:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_uint8",
+																			"typeString": "uint8"
+																		}
+																	},
+																	"nodeType": "BinaryOperation",
+																	"operator": "<",
+																	"rightExpression": {
+																		"hexValue": "35",
+																		"id": 98,
+																		"isConstant": false,
+																		"isLValue": false,
+																		"isPure": true,
+																		"kind": "number",
+																		"lValueRequested": false,
+																		"nodeType": "Literal",
+																		"src": "796:1:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_rational_5_by_1",
+																			"typeString": "int_const 5"
+																		},
+																		"value": "5"
+																	},
+																	"src": "792:5:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_bool",
+																		"typeString": "bool"
+																	}
+																},
+																"id": 118,
+																"initializationExpression": {
+																	"assignments": [
+																		94
+																	],
+																	"declarations": [
+																		{
+																			"constant": false,
+																			"id": 94,
+																			"mutability": "mutable",
+																			"name": "x",
+																			"nameLocation": "785:1:1",
+																			"nodeType": "VariableDeclaration",
+																			"scope": 118,
+																			"src": "779:7:1",
+																			"stateVariable": false,
+																			"storageLocation": "default",
+																			"typeDescriptions": {
+																				"typeIdentifier": "t_uint8",
+																				"typeString": "uint8"
+																			},
+																			"typeName": {
+																				"id": 93,
+																				"name": "uint8",
+																				"nodeType": "ElementaryTypeName",
+																				"src": "779:5:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_uint8",
+																					"typeString": "uint8"
+																				}
+																			},
+																			"visibility": "internal"
+																		}
+																	],
+																	"id": 96,
+																	"initialValue": {
+																		"hexValue": "30",
+																		"id": 95,
+																		"isConstant": false,
+																		"isLValue": false,
+																		"isPure": true,
+																		"kind": "number",
+																		"lValueRequested": false,
+																		"nodeType": "Literal",
+																		"src": "789:1:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_rational_0_by_1",
+																			"typeString": "int_const 0"
+																		},
+																		"value": "0"
+																	},
+																	"nodeType": "VariableDeclarationStatement",
+																	"src": "779:11:1"
+																},
+																"isSimpleCounterLoop": true,
+																"loopExpression": {
+																	"expression": {
+																		"id": 101,
+																		"isConstant": false,
+																		"isLValue": false,
+																		"isPure": false,
+																		"lValueRequested": false,
+																		"nodeType": "UnaryOperation",
+																		"operator": "++",
+																		"prefix": false,
+																		"src": "799:3:1",
+																		"subExpression": {
+																			"id": 100,
+																			"name": "x",
+																			"nodeType": "Identifier",
+																			"overloadedDeclarations": [],
+																			"referencedDeclaration": 94,
+																			"src": "799:1:1",
+																			"typeDescriptions": {
+																				"typeIdentifier": "t_uint8",
+																				"typeString": "uint8"
+																			}
+																		},
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_uint8",
+																			"typeString": "uint8"
+																		}
+																	},
+																	"id": 102,
+																	"nodeType": "ExpressionStatement",
+																	"src": "799:3:1"
+																},
+																"nodeType": "ForStatement",
+																"src": "774:189:1"
+															},
+															{
+																"condition": {
+																	"id": 119,
+																	"name": "isJackpotWinner",
+																	"nodeType": "Identifier",
+																	"overloadedDeclarations": [],
+																	"referencedDeclaration": 90,
+																	"src": "981:15:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_bool",
+																		"typeString": "bool"
+																	}
+																},
+																"id": 125,
+																"nodeType": "IfStatement",
+																"src": "977:78:1",
+																"trueBody": {
+																	"id": 124,
+																	"nodeType": "Block",
+																	"src": "998:57:1",
+																	"statements": [
+																		{
+																			"expression": {
+																				"id": 122,
+																				"isConstant": false,
+																				"isLValue": false,
+																				"isPure": false,
+																				"lValueRequested": false,
+																				"leftHandSide": {
+																					"id": 120,
+																					"name": "totalJackpotWinners",
+																					"nodeType": "Identifier",
+																					"overloadedDeclarations": [],
+																					"referencedDeclaration": 45,
+																					"src": "1016:19:1",
+																					"typeDescriptions": {
+																						"typeIdentifier": "t_uint256",
+																						"typeString": "uint256"
+																					}
+																				},
+																				"nodeType": "Assignment",
+																				"operator": "+=",
+																				"rightHandSide": {
+																					"hexValue": "31",
+																					"id": 121,
+																					"isConstant": false,
+																					"isLValue": false,
+																					"isPure": true,
+																					"kind": "number",
+																					"lValueRequested": false,
+																					"nodeType": "Literal",
+																					"src": "1039:1:1",
+																					"typeDescriptions": {
+																						"typeIdentifier": "t_rational_1_by_1",
+																						"typeString": "int_const 1"
+																					},
+																					"value": "1"
+																				},
+																				"src": "1016:24:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_uint256",
+																					"typeString": "uint256"
+																				}
+																			},
+																			"id": 123,
+																			"nodeType": "ExpressionStatement",
+																			"src": "1016:24:1"
+																		}
+																	]
+																}
+															}
+														]
+													},
+													"condition": {
+														"commonType": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														},
+														"id": 72,
+														"isConstant": false,
+														"isLValue": false,
+														"isPure": false,
+														"lValueRequested": false,
+														"leftExpression": {
+															"id": 70,
+															"name": "j",
+															"nodeType": "Identifier",
+															"overloadedDeclarations": [],
+															"referencedDeclaration": 67,
+															"src": "595:1:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_uint256",
+																"typeString": "uint256"
+															}
+														},
+														"nodeType": "BinaryOperation",
+														"operator": "<",
+														"rightExpression": {
+															"id": 71,
+															"name": "n",
+															"nodeType": "Identifier",
+															"overloadedDeclarations": [],
+															"referencedDeclaration": 60,
+															"src": "599:1:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_uint256",
+																"typeString": "uint256"
+															}
+														},
+														"src": "595:5:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_bool",
+															"typeString": "bool"
+														}
+													},
+													"id": 127,
+													"initializationExpression": {
+														"assignments": [
+															67
+														],
+														"declarations": [
+															{
+																"constant": false,
+																"id": 67,
+																"mutability": "mutable",
+																"name": "j",
+																"nameLocation": "588:1:1",
+																"nodeType": "VariableDeclaration",
+																"scope": 127,
+																"src": "580:9:1",
+																"stateVariable": false,
+																"storageLocation": "default",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_uint256",
+																	"typeString": "uint256"
+																},
+																"typeName": {
+																	"id": 66,
+																	"name": "uint256",
+																	"nodeType": "ElementaryTypeName",
+																	"src": "580:7:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_uint256",
+																		"typeString": "uint256"
+																	}
+																},
+																"visibility": "internal"
+															}
+														],
+														"id": 69,
+														"initialValue": {
+															"hexValue": "30",
+															"id": 68,
+															"isConstant": false,
+															"isLValue": false,
+															"isPure": true,
+															"kind": "number",
+															"lValueRequested": false,
+															"nodeType": "Literal",
+															"src": "592:1:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_rational_0_by_1",
+																"typeString": "int_const 0"
+															},
+															"value": "0"
+														},
+														"nodeType": "VariableDeclarationStatement",
+														"src": "580:13:1"
+													},
+													"isSimpleCounterLoop": true,
+													"loopExpression": {
+														"expression": {
+															"id": 74,
+															"isConstant": false,
+															"isLValue": false,
+															"isPure": false,
+															"lValueRequested": false,
+															"nodeType": "UnaryOperation",
+															"operator": "++",
+															"prefix": false,
+															"src": "602:3:1",
+															"subExpression": {
+																"id": 73,
+																"name": "j",
+																"nodeType": "Identifier",
+																"overloadedDeclarations": [],
+																"referencedDeclaration": 67,
+																"src": "602:1:1",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_uint256",
+																	"typeString": "uint256"
+																}
+															},
+															"typeDescriptions": {
+																"typeIdentifier": "t_uint256",
+																"typeString": "uint256"
+															}
+														},
+														"id": 75,
+														"nodeType": "ExpressionStatement",
+														"src": "602:3:1"
+													},
+													"nodeType": "ForStatement",
+													"src": "575:490:1"
+												}
+											]
+										},
+										"condition": {
+											"commonType": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											},
+											"id": 55,
+											"isConstant": false,
+											"isLValue": false,
+											"isPure": false,
+											"lValueRequested": false,
+											"leftExpression": {
+												"id": 52,
+												"name": "i",
+												"nodeType": "Identifier",
+												"overloadedDeclarations": [],
+												"referencedDeclaration": 49,
+												"src": "471:1:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"nodeType": "BinaryOperation",
+											"operator": "<",
+											"rightExpression": {
+												"expression": {
+													"id": 53,
+													"name": "players",
+													"nodeType": "Identifier",
+													"overloadedDeclarations": [],
+													"referencedDeclaration": 27,
+													"src": "475:7:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_array$_t_struct$_Player_$11_calldata_ptr_$dyn_calldata_ptr",
+														"typeString": "struct Player calldata[] calldata"
+													}
+												},
+												"id": 54,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": false,
+												"lValueRequested": false,
+												"memberLocation": "483:6:1",
+												"memberName": "length",
+												"nodeType": "MemberAccess",
+												"src": "475:14:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"src": "471:18:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_bool",
+												"typeString": "bool"
+											}
+										},
+										"id": 129,
+										"initializationExpression": {
+											"assignments": [
+												49
+											],
+											"declarations": [
+												{
+													"constant": false,
+													"id": 49,
+													"mutability": "mutable",
+													"name": "i",
+													"nameLocation": "464:1:1",
+													"nodeType": "VariableDeclaration",
+													"scope": 129,
+													"src": "456:9:1",
+													"stateVariable": false,
+													"storageLocation": "default",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													},
+													"typeName": {
+														"id": 48,
+														"name": "uint256",
+														"nodeType": "ElementaryTypeName",
+														"src": "456:7:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														}
+													},
+													"visibility": "internal"
+												}
+											],
+											"id": 51,
+											"initialValue": {
+												"hexValue": "30",
+												"id": 50,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": true,
+												"kind": "number",
+												"lValueRequested": false,
+												"nodeType": "Literal",
+												"src": "468:1:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_rational_0_by_1",
+													"typeString": "int_const 0"
+												},
+												"value": "0"
+											},
+											"nodeType": "VariableDeclarationStatement",
+											"src": "456:13:1"
+										},
+										"isSimpleCounterLoop": true,
+										"loopExpression": {
+											"expression": {
+												"id": 57,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": false,
+												"lValueRequested": false,
+												"nodeType": "UnaryOperation",
+												"operator": "++",
+												"prefix": false,
+												"src": "491:3:1",
+												"subExpression": {
+													"id": 56,
+													"name": "i",
+													"nodeType": "Identifier",
+													"overloadedDeclarations": [],
+													"referencedDeclaration": 49,
+													"src": "491:1:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"id": 58,
+											"nodeType": "ExpressionStatement",
+											"src": "491:3:1"
+										},
+										"nodeType": "ForStatement",
+										"src": "451:620:1"
+									},
+									{
+										"condition": {
+											"commonType": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											},
+											"id": 132,
+											"isConstant": false,
+											"isLValue": false,
+											"isPure": false,
+											"lValueRequested": false,
+											"leftExpression": {
+												"id": 130,
+												"name": "totalJackpotWinners",
+												"nodeType": "Identifier",
+												"overloadedDeclarations": [],
+												"referencedDeclaration": 45,
+												"src": "1081:19:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"nodeType": "BinaryOperation",
+											"operator": "==",
+											"rightExpression": {
+												"hexValue": "30",
+												"id": 131,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": true,
+												"kind": "number",
+												"lValueRequested": false,
+												"nodeType": "Literal",
+												"src": "1104:1:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_rational_0_by_1",
+													"typeString": "int_const 0"
+												},
+												"value": "0"
+											},
+											"src": "1081:24:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_bool",
+												"typeString": "bool"
+											}
+										},
+										"id": 142,
+										"nodeType": "IfStatement",
+										"src": "1077:75:1",
+										"trueBody": {
+											"id": 141,
+											"nodeType": "Block",
+											"src": "1107:45:1",
+											"statements": [
+												{
+													"expression": {
+														"components": [
+															{
+																"arguments": [
+																	{
+																		"hexValue": "30",
+																		"id": 136,
+																		"isConstant": false,
+																		"isLValue": false,
+																		"isPure": true,
+																		"kind": "number",
+																		"lValueRequested": false,
+																		"nodeType": "Literal",
+																		"src": "1139:1:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_rational_0_by_1",
+																			"typeString": "int_const 0"
+																		},
+																		"value": "0"
+																	}
+																],
+																"expression": {
+																	"argumentTypes": [
+																		{
+																			"typeIdentifier": "t_rational_0_by_1",
+																			"typeString": "int_const 0"
+																		}
+																	],
+																	"id": 135,
+																	"isConstant": false,
+																	"isLValue": false,
+																	"isPure": true,
+																	"lValueRequested": false,
+																	"nodeType": "NewExpression",
+																	"src": "1125:13:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_function_objectcreation_pure$_t_uint256_$returns$_t_array$_t_address_$dyn_memory_ptr_$",
+																		"typeString": "function (uint256) pure returns (address[] memory)"
+																	},
+																	"typeName": {
+																		"baseType": {
+																			"id": 133,
+																			"name": "address",
+																			"nodeType": "ElementaryTypeName",
+																			"src": "1129:7:1",
+																			"stateMutability": "nonpayable",
+																			"typeDescriptions": {
+																				"typeIdentifier": "t_address",
+																				"typeString": "address"
+																			}
+																		},
+																		"id": 134,
+																		"nodeType": "ArrayTypeName",
+																		"src": "1129:9:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+																			"typeString": "address[]"
+																		}
+																	}
+																},
+																"id": 137,
+																"isConstant": false,
+																"isLValue": false,
+																"isPure": true,
+																"kind": "functionCall",
+																"lValueRequested": false,
+																"nameLocations": [],
+																"names": [],
+																"nodeType": "FunctionCall",
+																"src": "1125:16:1",
+																"tryCall": false,
+																"typeDescriptions": {
+																	"typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+																	"typeString": "address[] memory"
+																}
+															},
+															{
+																"hexValue": "30",
+																"id": 138,
+																"isConstant": false,
+																"isLValue": false,
+																"isPure": true,
+																"kind": "number",
+																"lValueRequested": false,
+																"nodeType": "Literal",
+																"src": "1143:1:1",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_rational_0_by_1",
+																	"typeString": "int_const 0"
+																},
+																"value": "0"
+															}
+														],
+														"id": 139,
+														"isConstant": false,
+														"isInlineArray": false,
+														"isLValue": false,
+														"isPure": true,
+														"lValueRequested": false,
+														"nodeType": "TupleExpression",
+														"src": "1124:21:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_tuple$_t_array$_t_address_$dyn_memory_ptr_$_t_rational_0_by_1_$",
+															"typeString": "tuple(address[] memory,int_const 0)"
+														}
+													},
+													"functionReturnParameters": 34,
+													"id": 140,
+													"nodeType": "Return",
+													"src": "1117:28:1"
+												}
+											]
+										}
+									},
+									{
+										"expression": {
+											"id": 149,
+											"isConstant": false,
+											"isLValue": false,
+											"isPure": false,
+											"lValueRequested": false,
+											"leftHandSide": {
+												"id": 143,
+												"name": "winners",
+												"nodeType": "Identifier",
+												"overloadedDeclarations": [],
+												"referencedDeclaration": 31,
+												"src": "1204:7:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+													"typeString": "address[] memory"
+												}
+											},
+											"nodeType": "Assignment",
+											"operator": "=",
+											"rightHandSide": {
+												"arguments": [
+													{
+														"id": 147,
+														"name": "totalJackpotWinners",
+														"nodeType": "Identifier",
+														"overloadedDeclarations": [],
+														"referencedDeclaration": 45,
+														"src": "1228:19:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														}
+													}
+												],
+												"expression": {
+													"argumentTypes": [
+														{
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														}
+													],
+													"id": 146,
+													"isConstant": false,
+													"isLValue": false,
+													"isPure": true,
+													"lValueRequested": false,
+													"nodeType": "NewExpression",
+													"src": "1214:13:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_function_objectcreation_pure$_t_uint256_$returns$_t_array$_t_address_$dyn_memory_ptr_$",
+														"typeString": "function (uint256) pure returns (address[] memory)"
+													},
+													"typeName": {
+														"baseType": {
+															"id": 144,
+															"name": "address",
+															"nodeType": "ElementaryTypeName",
+															"src": "1218:7:1",
+															"stateMutability": "nonpayable",
+															"typeDescriptions": {
+																"typeIdentifier": "t_address",
+																"typeString": "address"
+															}
+														},
+														"id": 145,
+														"nodeType": "ArrayTypeName",
+														"src": "1218:9:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+															"typeString": "address[]"
+														}
+													}
+												},
+												"id": 148,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": false,
+												"kind": "functionCall",
+												"lValueRequested": false,
+												"nameLocations": [],
+												"names": [],
+												"nodeType": "FunctionCall",
+												"src": "1214:34:1",
+												"tryCall": false,
+												"typeDescriptions": {
+													"typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+													"typeString": "address[] memory"
+												}
+											},
+											"src": "1204:44:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+												"typeString": "address[] memory"
+											}
+										},
+										"id": 150,
+										"nodeType": "ExpressionStatement",
+										"src": "1204:44:1"
+									},
+									{
+										"assignments": [
+											152
+										],
+										"declarations": [
+											{
+												"constant": false,
+												"id": 152,
+												"mutability": "mutable",
+												"name": "winnerIndex",
+												"nameLocation": "1262:11:1",
+												"nodeType": "VariableDeclaration",
+												"scope": 246,
+												"src": "1254:19:1",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 151,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "1254:7:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"id": 154,
+										"initialValue": {
+											"hexValue": "30",
+											"id": 153,
+											"isConstant": false,
+											"isLValue": false,
+											"isPure": true,
+											"kind": "number",
+											"lValueRequested": false,
+											"nodeType": "Literal",
+											"src": "1276:1:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_rational_0_by_1",
+												"typeString": "int_const 0"
+											},
+											"value": "0"
+										},
+										"nodeType": "VariableDeclarationStatement",
+										"src": "1254:23:1"
+									},
+									{
+										"assignments": [
+											156
+										],
+										"declarations": [
+											{
+												"constant": false,
+												"id": 156,
+												"mutability": "mutable",
+												"name": "share",
+												"nameLocation": "1291:5:1",
+												"nodeType": "VariableDeclaration",
+												"scope": 246,
+												"src": "1283:13:1",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 155,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "1283:7:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"id": 160,
+										"initialValue": {
+											"commonType": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											},
+											"id": 159,
+											"isConstant": false,
+											"isLValue": false,
+											"isPure": false,
+											"lValueRequested": false,
+											"leftExpression": {
+												"id": 157,
+												"name": "totalPrizePool",
+												"nodeType": "Identifier",
+												"overloadedDeclarations": [],
+												"referencedDeclaration": 16,
+												"src": "1299:14:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"nodeType": "BinaryOperation",
+											"operator": "/",
+											"rightExpression": {
+												"id": 158,
+												"name": "totalJackpotWinners",
+												"nodeType": "Identifier",
+												"overloadedDeclarations": [],
+												"referencedDeclaration": 45,
+												"src": "1316:19:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"src": "1299:36:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"nodeType": "VariableDeclarationStatement",
+										"src": "1283:52:1"
+									},
+									{
+										"body": {
+											"id": 240,
+											"nodeType": "Block",
+											"src": "1411:509:1",
+											"statements": [
+												{
+													"assignments": [
+														173
+													],
+													"declarations": [
+														{
+															"constant": false,
+															"id": 173,
+															"mutability": "mutable",
+															"name": "n",
+															"nameLocation": "1429:1:1",
+															"nodeType": "VariableDeclaration",
+															"scope": 240,
+															"src": "1421:9:1",
+															"stateVariable": false,
+															"storageLocation": "default",
+															"typeDescriptions": {
+																"typeIdentifier": "t_uint256",
+																"typeString": "uint256"
+															},
+															"typeName": {
+																"id": 172,
+																"name": "uint256",
+																"nodeType": "ElementaryTypeName",
+																"src": "1421:7:1",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_uint256",
+																	"typeString": "uint256"
+																}
+															},
+															"visibility": "internal"
+														}
+													],
+													"id": 178,
+													"initialValue": {
+														"expression": {
+															"baseExpression": {
+																"id": 174,
+																"name": "players",
+																"nodeType": "Identifier",
+																"overloadedDeclarations": [],
+																"referencedDeclaration": 27,
+																"src": "1433:7:1",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_array$_t_struct$_Player_$11_calldata_ptr_$dyn_calldata_ptr",
+																	"typeString": "struct Player calldata[] calldata"
+																}
+															},
+															"id": 176,
+															"indexExpression": {
+																"id": 175,
+																"name": "i",
+																"nodeType": "Identifier",
+																"overloadedDeclarations": [],
+																"referencedDeclaration": 162,
+																"src": "1441:1:1",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_uint256",
+																	"typeString": "uint256"
+																}
+															},
+															"isConstant": false,
+															"isLValue": false,
+															"isPure": false,
+															"lValueRequested": false,
+															"nodeType": "IndexAccess",
+															"src": "1433:10:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_struct$_Player_$11_calldata_ptr",
+																"typeString": "struct Player calldata"
+															}
+														},
+														"id": 177,
+														"isConstant": false,
+														"isLValue": false,
+														"isPure": false,
+														"lValueRequested": false,
+														"memberLocation": "1444:15:1",
+														"memberName": "numberOfTickets",
+														"nodeType": "MemberAccess",
+														"referencedDeclaration": 10,
+														"src": "1433:26:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint16",
+															"typeString": "uint16"
+														}
+													},
+													"nodeType": "VariableDeclarationStatement",
+													"src": "1421:38:1"
+												},
+												{
+													"body": {
+														"id": 238,
+														"nodeType": "Block",
+														"src": "1502:412:1",
+														"statements": [
+															{
+																"assignments": [
+																	190
+																],
+																"declarations": [
+																	{
+																		"constant": false,
+																		"id": 190,
+																		"mutability": "mutable",
+																		"name": "isJackpotWinner",
+																		"nameLocation": "1521:15:1",
+																		"nodeType": "VariableDeclaration",
+																		"scope": 238,
+																		"src": "1516:20:1",
+																		"stateVariable": false,
+																		"storageLocation": "default",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_bool",
+																			"typeString": "bool"
+																		},
+																		"typeName": {
+																			"id": 189,
+																			"name": "bool",
+																			"nodeType": "ElementaryTypeName",
+																			"src": "1516:4:1",
+																			"typeDescriptions": {
+																				"typeIdentifier": "t_bool",
+																				"typeString": "bool"
+																			}
+																		},
+																		"visibility": "internal"
+																	}
+																],
+																"id": 192,
+																"initialValue": {
+																	"hexValue": "74727565",
+																	"id": 191,
+																	"isConstant": false,
+																	"isLValue": false,
+																	"isPure": true,
+																	"kind": "bool",
+																	"lValueRequested": false,
+																	"nodeType": "Literal",
+																	"src": "1539:4:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_bool",
+																		"typeString": "bool"
+																	},
+																	"value": "true"
+																},
+																"nodeType": "VariableDeclarationStatement",
+																"src": "1516:27:1"
+															},
+															{
+																"body": {
+																	"id": 222,
+																	"nodeType": "Block",
+																	"src": "1590:180:1",
+																	"statements": [
+																		{
+																			"condition": {
+																				"commonType": {
+																					"typeIdentifier": "t_uint8",
+																					"typeString": "uint8"
+																				},
+																				"id": 214,
+																				"isConstant": false,
+																				"isLValue": false,
+																				"isPure": false,
+																				"lValueRequested": false,
+																				"leftExpression": {
+																					"baseExpression": {
+																						"baseExpression": {
+																							"expression": {
+																								"baseExpression": {
+																									"id": 203,
+																									"name": "players",
+																									"nodeType": "Identifier",
+																									"overloadedDeclarations": [],
+																									"referencedDeclaration": 27,
+																									"src": "1612:7:1",
+																									"typeDescriptions": {
+																										"typeIdentifier": "t_array$_t_struct$_Player_$11_calldata_ptr_$dyn_calldata_ptr",
+																										"typeString": "struct Player calldata[] calldata"
+																									}
+																								},
+																								"id": 205,
+																								"indexExpression": {
+																									"id": 204,
+																									"name": "i",
+																									"nodeType": "Identifier",
+																									"overloadedDeclarations": [],
+																									"referencedDeclaration": 162,
+																									"src": "1620:1:1",
+																									"typeDescriptions": {
+																										"typeIdentifier": "t_uint256",
+																										"typeString": "uint256"
+																									}
+																								},
+																								"isConstant": false,
+																								"isLValue": false,
+																								"isPure": false,
+																								"lValueRequested": false,
+																								"nodeType": "IndexAccess",
+																								"src": "1612:10:1",
+																								"typeDescriptions": {
+																									"typeIdentifier": "t_struct$_Player_$11_calldata_ptr",
+																									"typeString": "struct Player calldata"
+																								}
+																							},
+																							"id": 206,
+																							"isConstant": false,
+																							"isLValue": false,
+																							"isPure": false,
+																							"lValueRequested": false,
+																							"memberLocation": "1623:13:1",
+																							"memberName": "ticketNumbers",
+																							"nodeType": "MemberAccess",
+																							"referencedDeclaration": 6,
+																							"src": "1612:24:1",
+																							"typeDescriptions": {
+																								"typeIdentifier": "t_array$_t_array$_t_uint8_$5_calldata_ptr_$dyn_calldata_ptr",
+																								"typeString": "uint8[5] calldata[] calldata"
+																							}
+																						},
+																						"id": 208,
+																						"indexExpression": {
+																							"id": 207,
+																							"name": "x",
+																							"nodeType": "Identifier",
+																							"overloadedDeclarations": [],
+																							"referencedDeclaration": 194,
+																							"src": "1637:1:1",
+																							"typeDescriptions": {
+																								"typeIdentifier": "t_uint256",
+																								"typeString": "uint256"
+																							}
+																						},
+																						"isConstant": false,
+																						"isLValue": false,
+																						"isPure": false,
+																						"lValueRequested": false,
+																						"nodeType": "IndexAccess",
+																						"src": "1612:27:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_array$_t_uint8_$5_calldata_ptr",
+																							"typeString": "uint8[5] calldata"
+																						}
+																					},
+																					"id": 210,
+																					"indexExpression": {
+																						"id": 209,
+																						"name": "j",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 180,
+																						"src": "1640:1:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_uint256",
+																							"typeString": "uint256"
+																						}
+																					},
+																					"isConstant": false,
+																					"isLValue": false,
+																					"isPure": false,
+																					"lValueRequested": false,
+																					"nodeType": "IndexAccess",
+																					"src": "1612:30:1",
+																					"typeDescriptions": {
+																						"typeIdentifier": "t_uint8",
+																						"typeString": "uint8"
+																					}
+																				},
+																				"nodeType": "BinaryOperation",
+																				"operator": "!=",
+																				"rightExpression": {
+																					"baseExpression": {
+																						"id": 211,
+																						"name": "winningNumbers",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 20,
+																						"src": "1646:14:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_array$_t_uint8_$5_calldata_ptr",
+																							"typeString": "uint8[5] calldata"
+																						}
+																					},
+																					"id": 213,
+																					"indexExpression": {
+																						"id": 212,
+																						"name": "x",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 194,
+																						"src": "1661:1:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_uint256",
+																							"typeString": "uint256"
+																						}
+																					},
+																					"isConstant": false,
+																					"isLValue": false,
+																					"isPure": false,
+																					"lValueRequested": false,
+																					"nodeType": "IndexAccess",
+																					"src": "1646:17:1",
+																					"typeDescriptions": {
+																						"typeIdentifier": "t_uint8",
+																						"typeString": "uint8"
+																					}
+																				},
+																				"src": "1612:51:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_bool",
+																					"typeString": "bool"
+																				}
+																			},
+																			"id": 221,
+																			"nodeType": "IfStatement",
+																			"src": "1608:148:1",
+																			"trueBody": {
+																				"id": 220,
+																				"nodeType": "Block",
+																				"src": "1665:91:1",
+																				"statements": [
+																					{
+																						"expression": {
+																							"id": 217,
+																							"isConstant": false,
+																							"isLValue": false,
+																							"isPure": false,
+																							"lValueRequested": false,
+																							"leftHandSide": {
+																								"id": 215,
+																								"name": "isJackpotWinner",
+																								"nodeType": "Identifier",
+																								"overloadedDeclarations": [],
+																								"referencedDeclaration": 190,
+																								"src": "1687:15:1",
+																								"typeDescriptions": {
+																									"typeIdentifier": "t_bool",
+																									"typeString": "bool"
+																								}
+																							},
+																							"nodeType": "Assignment",
+																							"operator": "=",
+																							"rightHandSide": {
+																								"hexValue": "66616c7365",
+																								"id": 216,
+																								"isConstant": false,
+																								"isLValue": false,
+																								"isPure": true,
+																								"kind": "bool",
+																								"lValueRequested": false,
+																								"nodeType": "Literal",
+																								"src": "1705:5:1",
+																								"typeDescriptions": {
+																									"typeIdentifier": "t_bool",
+																									"typeString": "bool"
+																								},
+																								"value": "false"
+																							},
+																							"src": "1687:23:1",
+																							"typeDescriptions": {
+																								"typeIdentifier": "t_bool",
+																								"typeString": "bool"
+																							}
+																						},
+																						"id": 218,
+																						"nodeType": "ExpressionStatement",
+																						"src": "1687:23:1"
+																					},
+																					{
+																						"id": 219,
+																						"nodeType": "Break",
+																						"src": "1732:5:1"
+																					}
+																				]
+																			}
+																		}
+																	]
+																},
+																"condition": {
+																	"commonType": {
+																		"typeIdentifier": "t_uint256",
+																		"typeString": "uint256"
+																	},
+																	"id": 199,
+																	"isConstant": false,
+																	"isLValue": false,
+																	"isPure": false,
+																	"lValueRequested": false,
+																	"leftExpression": {
+																		"id": 197,
+																		"name": "x",
+																		"nodeType": "Identifier",
+																		"overloadedDeclarations": [],
+																		"referencedDeclaration": 194,
+																		"src": "1578:1:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_uint256",
+																			"typeString": "uint256"
+																		}
+																	},
+																	"nodeType": "BinaryOperation",
+																	"operator": "<",
+																	"rightExpression": {
+																		"hexValue": "35",
+																		"id": 198,
+																		"isConstant": false,
+																		"isLValue": false,
+																		"isPure": true,
+																		"kind": "number",
+																		"lValueRequested": false,
+																		"nodeType": "Literal",
+																		"src": "1582:1:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_rational_5_by_1",
+																			"typeString": "int_const 5"
+																		},
+																		"value": "5"
+																	},
+																	"src": "1578:5:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_bool",
+																		"typeString": "bool"
+																	}
+																},
+																"id": 223,
+																"initializationExpression": {
+																	"assignments": [
+																		194
+																	],
+																	"declarations": [
+																		{
+																			"constant": false,
+																			"id": 194,
+																			"mutability": "mutable",
+																			"name": "x",
+																			"nameLocation": "1571:1:1",
+																			"nodeType": "VariableDeclaration",
+																			"scope": 223,
+																			"src": "1563:9:1",
+																			"stateVariable": false,
+																			"storageLocation": "default",
+																			"typeDescriptions": {
+																				"typeIdentifier": "t_uint256",
+																				"typeString": "uint256"
+																			},
+																			"typeName": {
+																				"id": 193,
+																				"name": "uint256",
+																				"nodeType": "ElementaryTypeName",
+																				"src": "1563:7:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_uint256",
+																					"typeString": "uint256"
+																				}
+																			},
+																			"visibility": "internal"
+																		}
+																	],
+																	"id": 196,
+																	"initialValue": {
+																		"hexValue": "30",
+																		"id": 195,
+																		"isConstant": false,
+																		"isLValue": false,
+																		"isPure": true,
+																		"kind": "number",
+																		"lValueRequested": false,
+																		"nodeType": "Literal",
+																		"src": "1575:1:1",
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_rational_0_by_1",
+																			"typeString": "int_const 0"
+																		},
+																		"value": "0"
+																	},
+																	"nodeType": "VariableDeclarationStatement",
+																	"src": "1563:13:1"
+																},
+																"isSimpleCounterLoop": true,
+																"loopExpression": {
+																	"expression": {
+																		"id": 201,
+																		"isConstant": false,
+																		"isLValue": false,
+																		"isPure": false,
+																		"lValueRequested": false,
+																		"nodeType": "UnaryOperation",
+																		"operator": "++",
+																		"prefix": false,
+																		"src": "1585:3:1",
+																		"subExpression": {
+																			"id": 200,
+																			"name": "x",
+																			"nodeType": "Identifier",
+																			"overloadedDeclarations": [],
+																			"referencedDeclaration": 194,
+																			"src": "1585:1:1",
+																			"typeDescriptions": {
+																				"typeIdentifier": "t_uint256",
+																				"typeString": "uint256"
+																			}
+																		},
+																		"typeDescriptions": {
+																			"typeIdentifier": "t_uint256",
+																			"typeString": "uint256"
+																		}
+																	},
+																	"id": 202,
+																	"nodeType": "ExpressionStatement",
+																	"src": "1585:3:1"
+																},
+																"nodeType": "ForStatement",
+																"src": "1558:212:1"
+															},
+															{
+																"condition": {
+																	"id": 224,
+																	"name": "isJackpotWinner",
+																	"nodeType": "Identifier",
+																	"overloadedDeclarations": [],
+																	"referencedDeclaration": 190,
+																	"src": "1788:15:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_bool",
+																		"typeString": "bool"
+																	}
+																},
+																"id": 237,
+																"nodeType": "IfStatement",
+																"src": "1784:120:1",
+																"trueBody": {
+																	"id": 236,
+																	"nodeType": "Block",
+																	"src": "1805:99:1",
+																	"statements": [
+																		{
+																			"expression": {
+																				"id": 231,
+																				"isConstant": false,
+																				"isLValue": false,
+																				"isPure": false,
+																				"lValueRequested": false,
+																				"leftHandSide": {
+																					"baseExpression": {
+																						"id": 225,
+																						"name": "winners",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 31,
+																						"src": "1823:7:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+																							"typeString": "address[] memory"
+																						}
+																					},
+																					"id": 227,
+																					"indexExpression": {
+																						"id": 226,
+																						"name": "winnerIndex",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 152,
+																						"src": "1831:11:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_uint256",
+																							"typeString": "uint256"
+																						}
+																					},
+																					"isConstant": false,
+																					"isLValue": true,
+																					"isPure": false,
+																					"lValueRequested": true,
+																					"nodeType": "IndexAccess",
+																					"src": "1823:20:1",
+																					"typeDescriptions": {
+																						"typeIdentifier": "t_address",
+																						"typeString": "address"
+																					}
+																				},
+																				"nodeType": "Assignment",
+																				"operator": "=",
+																				"rightHandSide": {
+																					"baseExpression": {
+																						"id": 228,
+																						"name": "addresses",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 23,
+																						"src": "1846:9:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+																							"typeString": "address[] calldata"
+																						}
+																					},
+																					"id": 230,
+																					"indexExpression": {
+																						"id": 229,
+																						"name": "i",
+																						"nodeType": "Identifier",
+																						"overloadedDeclarations": [],
+																						"referencedDeclaration": 162,
+																						"src": "1856:1:1",
+																						"typeDescriptions": {
+																							"typeIdentifier": "t_uint256",
+																							"typeString": "uint256"
+																						}
+																					},
+																					"isConstant": false,
+																					"isLValue": false,
+																					"isPure": false,
+																					"lValueRequested": false,
+																					"nodeType": "IndexAccess",
+																					"src": "1846:12:1",
+																					"typeDescriptions": {
+																						"typeIdentifier": "t_address",
+																						"typeString": "address"
+																					}
+																				},
+																				"src": "1823:35:1",
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_address",
+																					"typeString": "address"
+																				}
+																			},
+																			"id": 232,
+																			"nodeType": "ExpressionStatement",
+																			"src": "1823:35:1"
+																		},
+																		{
+																			"expression": {
+																				"id": 234,
+																				"isConstant": false,
+																				"isLValue": false,
+																				"isPure": false,
+																				"lValueRequested": false,
+																				"nodeType": "UnaryOperation",
+																				"operator": "++",
+																				"prefix": false,
+																				"src": "1876:13:1",
+																				"subExpression": {
+																					"id": 233,
+																					"name": "winnerIndex",
+																					"nodeType": "Identifier",
+																					"overloadedDeclarations": [],
+																					"referencedDeclaration": 152,
+																					"src": "1876:11:1",
+																					"typeDescriptions": {
+																						"typeIdentifier": "t_uint256",
+																						"typeString": "uint256"
+																					}
+																				},
+																				"typeDescriptions": {
+																					"typeIdentifier": "t_uint256",
+																					"typeString": "uint256"
+																				}
+																			},
+																			"id": 235,
+																			"nodeType": "ExpressionStatement",
+																			"src": "1876:13:1"
+																		}
+																	]
+																}
+															}
+														]
+													},
+													"condition": {
+														"commonType": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														},
+														"id": 185,
+														"isConstant": false,
+														"isLValue": false,
+														"isPure": false,
+														"lValueRequested": false,
+														"leftExpression": {
+															"id": 183,
+															"name": "j",
+															"nodeType": "Identifier",
+															"overloadedDeclarations": [],
+															"referencedDeclaration": 180,
+															"src": "1490:1:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_uint256",
+																"typeString": "uint256"
+															}
+														},
+														"nodeType": "BinaryOperation",
+														"operator": "<",
+														"rightExpression": {
+															"id": 184,
+															"name": "n",
+															"nodeType": "Identifier",
+															"overloadedDeclarations": [],
+															"referencedDeclaration": 173,
+															"src": "1494:1:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_uint256",
+																"typeString": "uint256"
+															}
+														},
+														"src": "1490:5:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_bool",
+															"typeString": "bool"
+														}
+													},
+													"id": 239,
+													"initializationExpression": {
+														"assignments": [
+															180
+														],
+														"declarations": [
+															{
+																"constant": false,
+																"id": 180,
+																"mutability": "mutable",
+																"name": "j",
+																"nameLocation": "1483:1:1",
+																"nodeType": "VariableDeclaration",
+																"scope": 239,
+																"src": "1475:9:1",
+																"stateVariable": false,
+																"storageLocation": "default",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_uint256",
+																	"typeString": "uint256"
+																},
+																"typeName": {
+																	"id": 179,
+																	"name": "uint256",
+																	"nodeType": "ElementaryTypeName",
+																	"src": "1475:7:1",
+																	"typeDescriptions": {
+																		"typeIdentifier": "t_uint256",
+																		"typeString": "uint256"
+																	}
+																},
+																"visibility": "internal"
+															}
+														],
+														"id": 182,
+														"initialValue": {
+															"hexValue": "30",
+															"id": 181,
+															"isConstant": false,
+															"isLValue": false,
+															"isPure": true,
+															"kind": "number",
+															"lValueRequested": false,
+															"nodeType": "Literal",
+															"src": "1487:1:1",
+															"typeDescriptions": {
+																"typeIdentifier": "t_rational_0_by_1",
+																"typeString": "int_const 0"
+															},
+															"value": "0"
+														},
+														"nodeType": "VariableDeclarationStatement",
+														"src": "1475:13:1"
+													},
+													"isSimpleCounterLoop": true,
+													"loopExpression": {
+														"expression": {
+															"id": 187,
+															"isConstant": false,
+															"isLValue": false,
+															"isPure": false,
+															"lValueRequested": false,
+															"nodeType": "UnaryOperation",
+															"operator": "++",
+															"prefix": false,
+															"src": "1497:3:1",
+															"subExpression": {
+																"id": 186,
+																"name": "j",
+																"nodeType": "Identifier",
+																"overloadedDeclarations": [],
+																"referencedDeclaration": 180,
+																"src": "1497:1:1",
+																"typeDescriptions": {
+																	"typeIdentifier": "t_uint256",
+																	"typeString": "uint256"
+																}
+															},
+															"typeDescriptions": {
+																"typeIdentifier": "t_uint256",
+																"typeString": "uint256"
+															}
+														},
+														"id": 188,
+														"nodeType": "ExpressionStatement",
+														"src": "1497:3:1"
+													},
+													"nodeType": "ForStatement",
+													"src": "1470:444:1"
+												}
+											]
+										},
+										"condition": {
+											"commonType": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											},
+											"id": 168,
+											"isConstant": false,
+											"isLValue": false,
+											"isPure": false,
+											"lValueRequested": false,
+											"leftExpression": {
+												"id": 165,
+												"name": "i",
+												"nodeType": "Identifier",
+												"overloadedDeclarations": [],
+												"referencedDeclaration": 162,
+												"src": "1386:1:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"nodeType": "BinaryOperation",
+											"operator": "<",
+											"rightExpression": {
+												"expression": {
+													"id": 166,
+													"name": "players",
+													"nodeType": "Identifier",
+													"overloadedDeclarations": [],
+													"referencedDeclaration": 27,
+													"src": "1390:7:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_array$_t_struct$_Player_$11_calldata_ptr_$dyn_calldata_ptr",
+														"typeString": "struct Player calldata[] calldata"
+													}
+												},
+												"id": 167,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": false,
+												"lValueRequested": false,
+												"memberLocation": "1398:6:1",
+												"memberName": "length",
+												"nodeType": "MemberAccess",
+												"src": "1390:14:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"src": "1386:18:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_bool",
+												"typeString": "bool"
+											}
+										},
+										"id": 241,
+										"initializationExpression": {
+											"assignments": [
+												162
+											],
+											"declarations": [
+												{
+													"constant": false,
+													"id": 162,
+													"mutability": "mutable",
+													"name": "i",
+													"nameLocation": "1379:1:1",
+													"nodeType": "VariableDeclaration",
+													"scope": 241,
+													"src": "1371:9:1",
+													"stateVariable": false,
+													"storageLocation": "default",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													},
+													"typeName": {
+														"id": 161,
+														"name": "uint256",
+														"nodeType": "ElementaryTypeName",
+														"src": "1371:7:1",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint256",
+															"typeString": "uint256"
+														}
+													},
+													"visibility": "internal"
+												}
+											],
+											"id": 164,
+											"initialValue": {
+												"hexValue": "30",
+												"id": 163,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": true,
+												"kind": "number",
+												"lValueRequested": false,
+												"nodeType": "Literal",
+												"src": "1383:1:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_rational_0_by_1",
+													"typeString": "int_const 0"
+												},
+												"value": "0"
+											},
+											"nodeType": "VariableDeclarationStatement",
+											"src": "1371:13:1"
+										},
+										"isSimpleCounterLoop": true,
+										"loopExpression": {
+											"expression": {
+												"id": 170,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": false,
+												"lValueRequested": false,
+												"nodeType": "UnaryOperation",
+												"operator": "++",
+												"prefix": false,
+												"src": "1406:3:1",
+												"subExpression": {
+													"id": 169,
+													"name": "i",
+													"nodeType": "Identifier",
+													"overloadedDeclarations": [],
+													"referencedDeclaration": 162,
+													"src": "1406:1:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												}
+											},
+											"id": 171,
+											"nodeType": "ExpressionStatement",
+											"src": "1406:3:1"
+										},
+										"nodeType": "ForStatement",
+										"src": "1366:554:1"
+									},
+									{
+										"expression": {
+											"components": [
+												{
+													"id": 242,
+													"name": "winners",
+													"nodeType": "Identifier",
+													"overloadedDeclarations": [],
+													"referencedDeclaration": 31,
+													"src": "1934:7:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+														"typeString": "address[] memory"
+													}
+												},
+												{
+													"id": 243,
+													"name": "share",
+													"nodeType": "Identifier",
+													"overloadedDeclarations": [],
+													"referencedDeclaration": 156,
+													"src": "1943:5:1",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												}
+											],
+											"id": 244,
+											"isConstant": false,
+											"isInlineArray": false,
+											"isLValue": false,
+											"isPure": false,
+											"lValueRequested": false,
+											"nodeType": "TupleExpression",
+											"src": "1933:16:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_tuple$_t_array$_t_address_$dyn_memory_ptr_$_t_uint256_$",
+												"typeString": "tuple(address[] memory,uint256)"
+											}
+										},
+										"functionReturnParameters": 34,
+										"id": 245,
+										"nodeType": "Return",
+										"src": "1926:23:1"
+									}
+								]
+							},
+							"id": 247,
+							"implemented": true,
+							"kind": "freeFunction",
+							"modifiers": [],
+							"name": "determinePrizes",
+							"nameLocation": "98:15:1",
+							"nodeType": "FunctionDefinition",
+							"parameters": {
+								"id": 28,
+								"nodeType": "ParameterList",
+								"parameters": [
+									{
+										"constant": false,
+										"id": 16,
+										"mutability": "mutable",
+										"name": "totalPrizePool",
+										"nameLocation": "127:14:1",
+										"nodeType": "VariableDeclaration",
+										"scope": 247,
+										"src": "119:22:1",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										},
+										"typeName": {
+											"id": 15,
+											"name": "uint256",
+											"nodeType": "ElementaryTypeName",
+											"src": "119:7:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 20,
+										"mutability": "mutable",
+										"name": "winningNumbers",
+										"nameLocation": "165:14:1",
+										"nodeType": "VariableDeclaration",
+										"scope": 247,
+										"src": "147:32:1",
+										"stateVariable": false,
+										"storageLocation": "calldata",
+										"typeDescriptions": {
+											"typeIdentifier": "t_array$_t_uint8_$5_calldata_ptr",
+											"typeString": "uint8[5]"
+										},
+										"typeName": {
+											"baseType": {
+												"id": 17,
+												"name": "uint8",
+												"nodeType": "ElementaryTypeName",
+												"src": "147:5:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint8",
+													"typeString": "uint8"
+												}
+											},
+											"id": 19,
+											"length": {
+												"hexValue": "35",
+												"id": 18,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": true,
+												"kind": "number",
+												"lValueRequested": false,
+												"nodeType": "Literal",
+												"src": "153:1:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_rational_5_by_1",
+													"typeString": "int_const 5"
+												},
+												"value": "5"
+											},
+											"nodeType": "ArrayTypeName",
+											"src": "147:8:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_array$_t_uint8_$5_storage_ptr",
+												"typeString": "uint8[5]"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 23,
+										"mutability": "mutable",
+										"name": "addresses",
+										"nameLocation": "204:9:1",
+										"nodeType": "VariableDeclaration",
+										"scope": 247,
+										"src": "185:28:1",
+										"stateVariable": false,
+										"storageLocation": "calldata",
+										"typeDescriptions": {
+											"typeIdentifier": "t_array$_t_address_$dyn_calldata_ptr",
+											"typeString": "address[]"
+										},
+										"typeName": {
+											"baseType": {
+												"id": 21,
+												"name": "address",
+												"nodeType": "ElementaryTypeName",
+												"src": "185:7:1",
+												"stateMutability": "nonpayable",
+												"typeDescriptions": {
+													"typeIdentifier": "t_address",
+													"typeString": "address"
+												}
+											},
+											"id": 22,
+											"nodeType": "ArrayTypeName",
+											"src": "185:9:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+												"typeString": "address[]"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 27,
+										"mutability": "mutable",
+										"name": "players",
+										"nameLocation": "237:7:1",
+										"nodeType": "VariableDeclaration",
+										"scope": 247,
+										"src": "219:25:1",
+										"stateVariable": false,
+										"storageLocation": "calldata",
+										"typeDescriptions": {
+											"typeIdentifier": "t_array$_t_struct$_Player_$11_calldata_ptr_$dyn_calldata_ptr",
+											"typeString": "struct Player[]"
+										},
+										"typeName": {
+											"baseType": {
+												"id": 25,
+												"nodeType": "UserDefinedTypeName",
+												"pathNode": {
+													"id": 24,
+													"name": "Player",
+													"nameLocations": [
+														"219:6:1"
+													],
+													"nodeType": "IdentifierPath",
+													"referencedDeclaration": 11,
+													"src": "219:6:1"
+												},
+												"referencedDeclaration": 11,
+												"src": "219:6:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_struct$_Player_$11_storage_ptr",
+													"typeString": "struct Player"
+												}
+											},
+											"id": 26,
+											"nodeType": "ArrayTypeName",
+											"src": "219:8:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_array$_t_struct$_Player_$11_storage_$dyn_storage_ptr",
+												"typeString": "struct Player[]"
+											}
+										},
+										"visibility": "internal"
+									}
+								],
+								"src": "113:133:1"
+							},
+							"returnParameters": {
+								"id": 34,
+								"nodeType": "ParameterList",
+								"parameters": [
+									{
+										"constant": false,
+										"id": 31,
+										"mutability": "mutable",
+										"name": "winners",
+										"nameLocation": "278:7:1",
+										"nodeType": "VariableDeclaration",
+										"scope": 247,
+										"src": "261:24:1",
+										"stateVariable": false,
+										"storageLocation": "memory",
+										"typeDescriptions": {
+											"typeIdentifier": "t_array$_t_address_$dyn_memory_ptr",
+											"typeString": "address[]"
+										},
+										"typeName": {
+											"baseType": {
+												"id": 29,
+												"name": "address",
+												"nodeType": "ElementaryTypeName",
+												"src": "261:7:1",
+												"stateMutability": "nonpayable",
+												"typeDescriptions": {
+													"typeIdentifier": "t_address",
+													"typeString": "address"
+												}
+											},
+											"id": 30,
+											"nodeType": "ArrayTypeName",
+											"src": "261:9:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_array$_t_address_$dyn_storage_ptr",
+												"typeString": "address[]"
+											}
+										},
+										"visibility": "internal"
+									},
+									{
+										"constant": false,
+										"id": 33,
+										"mutability": "mutable",
+										"name": "winAmount",
+										"nameLocation": "295:9:1",
+										"nodeType": "VariableDeclaration",
+										"scope": 247,
+										"src": "287:17:1",
+										"stateVariable": false,
+										"storageLocation": "default",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint256",
+											"typeString": "uint256"
+										},
+										"typeName": {
+											"id": 32,
+											"name": "uint256",
+											"nodeType": "ElementaryTypeName",
+											"src": "287:7:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_uint256",
+												"typeString": "uint256"
+											}
+										},
+										"visibility": "internal"
+									}
+								],
+								"src": "260:45:1"
+							},
+							"scope": 248,
+							"src": "89:1863:1",
+							"stateMutability": "pure",
+							"virtual": false,
+							"visibility": "internal"
+						}
+					],
+					"src": "32:1920:1"
+				},
+				"id": 1
+			}
+		}
+	}
+}
