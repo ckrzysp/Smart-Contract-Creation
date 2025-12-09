@@ -30,21 +30,29 @@ import "@chainlink/contracts/src/v0.8/vrf/dev/libraries/VRFV2PlusClient.sol";
 /// Lottery with immutability.
 contract Lottery is VRFV2PlusWrapperConsumerBase {
     /// Essential variables for the lottery
-    address[] participants;
-    mapping(address => bool) public hasJoined; // Prevent same person joining twice
+    struct Player {
+        uint8[][5] ticketNumbers;
+        bool hasJoined;
+        uint16 numberOfTickets;
+    }
+    // A dictionary of an address to the tickets it has purchased in the current iteration of the lottery.
+    mapping(address => Player) public participantsToTickets;
+    uint16 private totalTickets = 0;
+
     address payable public host;
-    uint64 public constant monetaryPrize = 5 ether;
-    uint256 amountToSend = monetaryPrize;
-    uint64 public ticketCost = 0.015 ether;
+
+    uint32 public ticketCost = 0.015 ether;
+    uint32 hostTicketFee = ticketCost * 0.20; // Host takes a 20% cut from each ticket. the remaining 80% is for prize money
+
     event participantJoined(address prtcpt, string alert); // Event that alerts them when they join
     event lotterWinner(address winner, uint64 prize); // Event that alerts when there is a lottery winner
+
     bytes32 internal keyHash;
     uint256 internal fee;
     uint256 public randomResult;
     uint256 public requestId;
-    uint256 public min;
-    uint256 public max;
-    bool public ended = false;
+    // uint256 public min;
+    // uint256 public max;  don't think a max makes sense anymore
 
     constructor(
         uint256 min_,
@@ -53,8 +61,8 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     ) VRFV2PlusWrapperConsumerBase(vrfWrapper) {
         // User who deployed the contract
         host = payable(msg.sender);
-        min = min_;
-        max = max_;
+        // min = min_;
+        // max = max_;
     }
 
     modifier onlyHost() {
@@ -62,54 +70,11 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         _;
     }
 
-    /*
-     *  joinLottery
-     *  Allows a user to join the lottery by buying a ticket
-     *  Adds them to lottery basket
-     */
-    function joinLottery() external payable {
-        require(!ended, "Lottery has ended.");
-        require(msg.value == ticketCost, "Wrong Amount.");
-        require(participants.length < max, "This lottery is full.");
-        require(
-            !hasJoined[msg.sender],
-            "You have already joined this lottery."
-        );
-
-        participants.push(msg.sender);
-        hasJoined[msg.sender] = true;
-        emit participantJoined(msg.sender, "joined");
-    }
-
-    /*  
-     *  findWinner
-     *  Only host can start the lottery, random number from VRF
-     *  Returns void, calculates random number
-     */
-
-    /*
     function start() external onlyHost {
-        require(!ended, "Lottery has already ended");
-        require(
-            participants.length >= min,
-            "There are not enough people to start this lottery"
-        );
-        require(participants.length > 0, "No participants");
-    
-        // Request random number from Chainlink VRF v2.5 Direct Funding
-        bytes memory extraArgs = VRFV2PlusClient._argsToBytes(
-            VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
-        );
-        (requestId, ) = requestRandomness(100000, 3, 1, extraArgs);
-    }
-    */
-
-    function start() external onlyHost {
-        require(!ended, "Lottery has already ended");
-        require(
-            participants.length >= min,
-            "There are not enough people to start this lottery"
-        );
+        // require(
+        //     participants.length >= min,
+        //     "There are not enough people to start this lottery"
+        // );
         require(participants.length > 0, "No participants");
         
         // Added this line to check to make sure the contract has enough money to pay the winner
@@ -190,7 +155,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     /// @param user The address to check for participation.
     /// @return bool Returns true if the user has joined, false otherwise.
     function getParticipantStatus(address user) public view returns (bool) {
-        return hasJoined[user];
+        return participantsToTickets[user].hasJoined;
     }
 
     /// Replaced the for loop in getParticipant with a direct mapping lookup. The old method got slower as more participants joined, so this keeps it fast regardless of size.
