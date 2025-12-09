@@ -39,6 +39,8 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
 
     address payable public host;
 
+    uint32 public prizePool = 0;
+    uint32 hostCut = 0;
     uint32 public ticketCost = 0.015 ether;
     uint32 hostTicketFee = ticketCost * 0.20; // Host takes a 20% cut from each ticket. the remaining 80% is for prize money
 
@@ -75,7 +77,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     }
 
     /*
-     *  joinLottery
+     *  buyTicket
      *  Allows a user to join the lottery by buying a ticket
      *  Adds them to lottery basket
      */
@@ -86,7 +88,14 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         );
         validateTicketNumbers(ticketNumbers);
 
+        // User Pays
         require(payable(msg.sender), "You have to be a payable address to be sent the lottery prize"); 
+        hostCut = hostTicketFee;
+        prizePool = msg.value - hostCut;
+
+        // Pay owner, using call gives us safety, transfer and send can fail, but this cancels everything
+        (bool sent, bytes memory data) = host.call{value: hostCut};
+        require(sent, "Owner was not payed.");
 
         participantsToTickets[msg.sender].push(ticketNumbers);
         participantsToTickets[msg.sender].numberOfTickets += 1;
@@ -150,33 +159,6 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         uint256 winnerIndex = randomResult % participants.length;
         return participants[winnerIndex];
     }
-
-    /*
-     *  fulfillRandomWords
-     *  Chainlink VRF calls this function with the random number (callback)
-     *  Returns void, transfers money
-    */ 
-
-/*
-    function fulfillRandomWords(
-        uint256 _requestId, 
-        uint256[] memory _randomWords
-    ) internal override {
-        require(_randomWords.length > 0, "No random words received.");
-        require(participants.length > 0, "No participants.");
-
-        randomResult = _randomWords[0];
-        address winnerAddress = findWinner();
-
-        emit lotterWinner(winnerAddress, monetaryPrize);
-        ended = true;
-        
-        // Pay winner
-        require(msg.value >= amountToSend, "Failed to send prize amount.");
-        payable(winnerAddress).transfer(amountToSend);
-        amountToSend = 0;
-    }
-*/
 
     // The state variables
     uint256 public drawBlockNumber;        // Block we’ll use later for randomness
@@ -276,11 +258,4 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
 
     /// Replaced the for loop in getParticipant with a direct mapping lookup. The old method got slower as more participants joined, so this keeps it fast regardless of size.
 
-
 }
-
-
-
-
-
-
