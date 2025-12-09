@@ -25,13 +25,11 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.18;
 
-import "@chainlink/contracts/src/v0.8/vrf/dev/VRFV2PlusWrapperConsumerBase.sol";
-import "@chainlink/contracts/src/v0.8/vrf/dev/libraries/VRFV2PlusClient.sol";
 import "contract/Player.sol";
 import "utils/Utils.sol";
 
 /// Lottery with immutability.
-contract Lottery is VRFV2PlusWrapperConsumerBase {
+contract Lottery {
     // A dictionary of an address to the tickets it has purchased in the current iteration of the lottery.
     mapping(address => Player) public participantsToTickets = new mapping(address => Player);
     uint16 private totalTickets = 0;
@@ -47,16 +45,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     event participantJoined(address prtcpt, string alert); // Event that alerts them when they join
     event lotterWinner(address winner, uint64 prize); // Event that alerts when there is a lottery winner
 
-    bytes32 internal keyHash;
-    uint256 internal fee;
-    uint256 public randomResult;
-    uint256 public requestId;
-
-    constructor(
-        uint256 min_,
-        uint256 max_,
-        address vrfWrapper
-    ) VRFV2PlusWrapperConsumerBase(vrfWrapper) {
+    constructor() {
         // User who deployed the contract
         host = payable(msg.sender);
     }
@@ -111,54 +100,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         emit participantJoined(msg.sender, "joined");
     }
 
-    function startLottery() external onlyHost {
-        // require(participants.length > 0, "No participants");
-        
-        // Added this line to check to make sure the contract has enough money to pay the winner
-        // Prevent lottery from starting without funds
-        // require(address(this).balance >= monetaryPrize, "Insufficient contract balance for prize.");
-        uint256 totalPrizePool = totalTickets * (ticketCost * 0.8);
-        uint8[5] winningNumbers = [1, 2, 3, 4, 5];  // This is just an example
-        uint256 numPlayers = participantAddresses.length;
-        Player[] players = new Player[](numPlayers);
 
-        for (uint256 i = 0; i < numPlayers; i++) {
-            players.push(participantsToTickets[participantAddresses[i]]);
-        }
-
-        (address[] winners, uint256 amountWon) = determinePrizes(
-            totalPrizePool,
-            winningNumbers,
-            participantAddresses,
-            players
-        );
-
-        for (uint256 i = 0; i < winners.length; i++) {
-            // Send the money to each address
-        }
-    
-        // Request random number from Chainlink VRF v2.5 Direct Funding
-        // bytes memory extraArgs = VRFV2PlusClient._argsToBytes(
-        //     VRFV2PlusClient.ExtraArgsV1({nativePayment: false})
-        // );
-        // (requestId, ) = requestRandomness(100000, 3, 1, extraArgs);
-    }
-
-    /*  
-     *  findWinner
-     *  Generates random number to select from participants list and return winner
-     *  Returns winner
-     */
-    function findWinner() private view returns (address) {
-        // Get random participant using chainlink VRFConsumerBase
-        // For reference, we should implement direct funding VRF paid by the lottery fee instead
-        // of subscription funding since we're looking to get a random number once per contract.
-        // Docs: https://docs.chain.link/vrf/v2-5/overview/direct-funding
-
-        // Use random number from Chainlink to select winner
-        uint256 winnerIndex = randomResult % participants.length;
-        return participants[winnerIndex];
-    }
 
     // The state variables
     uint256 public drawBlockNumber;        // Block we’ll use later for randomness
@@ -168,7 +110,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     
     
     // Start the lottery draw
-    function initiateLotteryDraw() external {
+    function startLottery() external {
         // Make sure we aren't starting a second draw on the same round
         require(!drawInitiated, "Draw already initiated.");
     
@@ -195,7 +137,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
     }
 
     // Function to finalize the lottery and pick a winner
-    function finalizeLottery() external {
+    function findWinner() external {
         // Can't finish something we didn't start
         require(drawInitiated, "Draw not initiated.");
     
