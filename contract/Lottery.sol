@@ -29,10 +29,11 @@ pragma solidity ^0.8.18;
 /// All parameters are set in the constructor and can be adjusted by the host over time.
 
 import "contract/Player.sol";
+import "contract/Interface.sol";
 import "utils/Utils.sol";
 
 /// Lottery with immutability.
-contract Lottery {
+contract Lottery is ILottery {
     // A dictionary of an address to the tickets it has purchased in the current iteration of the lottery.
     mapping(address => Player) public participantsToTickets =
         new mapping(address => Player);
