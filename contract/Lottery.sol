@@ -91,7 +91,7 @@ contract Lottery is VRFV2PlusWrapperConsumerBase {
         // User Pays
         require(payable(msg.sender), "You have to be a payable address to be sent the lottery prize"); 
         hostCut = hostTicketFee;
-        prizePool = msg.value - hostCut;
+        prizePool += msg.value - hostCut;
 
         // Pay owner, using call gives us safety, transfer and send can fail, but this cancels everything
         (bool sent, bytes memory data) = host.call{value: hostCut};
