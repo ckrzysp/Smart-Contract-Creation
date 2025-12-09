@@ -42,10 +42,10 @@ contract Lottery is ILottery {
 
     address payable public host;
 
-    uint32 public prizePool = 0;
-    uint32 hostCut = 0;
-    uint32 public ticketCost = 0.015 ether;
-    uint32 hostTicketFee = ticketCost * 0.20; // Host takes a 20% cut from each ticket. the remaining 80% is for prize money
+    uint256 public prizePool = 0;
+    uint256 hostCut = 0;
+    uint256 public ticketCost = 0.015 ether;
+    uint256 hostTicketFee = ticketCost * 0.20; // Host takes a 20% cut from each ticket. the remaining 80% is for prize money
 
     event participantJoined(address prtcpt, string alert); // Event that alerts them when they join
     event lotterWinner(address winner, uint64 prize); // Event that alerts when there is a lottery winner
@@ -53,6 +53,7 @@ contract Lottery is ILottery {
     // Randomness & Draw State
     uint256 public drawBlockNumber; // Block we'll use later for randomness
     bool public drawInitiated = false; // Stops someone from starting the draw twice
+    bool public ended = false; // Prevents double payout
     uint256 public lastDrawTime = 0; // When the last draw happened (0 means never)
 
     // Trigger Parameters
@@ -151,28 +152,25 @@ contract Lottery is ILottery {
      *  Adds them to lottery basket
      */
     function buyTicket(uint8[5] calldata ticketNumbers) external payable {
+        require(!drawInitiated, "Cannot buy tickets during active draw");
         require(
-            msg.value < ticketCost,
-            "Wrong amount of ether to join. Please pay at least 0.15 ether. Any more will be considered a tip."
+            msg.value >= ticketCost,
+            "Wrong amount of ether to join. Please pay at least 0.015 ether. Any more will be considered a tip."
         );
         validateTicketNumbers(ticketNumbers);
 
         // User Pays
-        require(
-            payable(msg.sender),
-            "You have to be a payable address to be sent the lottery prize"
-        );
         hostCut = hostTicketFee;
         prizePool += msg.value - hostCut;
 
         // Pay owner, using call gives us safety, transfer and send can fail, but this cancels everything
-        (bool sent, bytes memory data) = host.call{value: hostCut};
+        (bool sent, ) = host.call{value: hostCut}("");
         require(sent, "Owner was not payed.");
 
-        participantsToTickets[msg.sender].push(ticketNumbers);
+        participantsToTickets[msg.sender].ticketNumbers.push(ticketNumbers);
         participantsToTickets[msg.sender].numberOfTickets += 1;
 
-        if (participantsToTickets[msg.sender].hasJoined = false) {
+        if (!participantsToTickets[msg.sender].hasJoined) {
             participantsToTickets[msg.sender].hasJoined = true;
 
             participantAddresses.push(msg.sender);
@@ -201,7 +199,7 @@ contract Lottery is ILottery {
         // Check if either trigger condition is met:
         // 1. Time-based: drawInterval has passed, OR
         // 2. Ticket-based: maxTicketsPerDraw reached
-        bool timeConditionMet = block.timestamp >= lastDrawTime + drawInterval;
+        bool timeConditionMet = (lastDrawTime == 0) || (block.timestamp >= lastDrawTime + drawInterval);
         bool ticketCapReached = totalTickets >= maxTicketsPerDraw;
 
         require(
@@ -251,25 +249,32 @@ contract Lottery is ILottery {
         );
 
         // Picking a winner based on modulo math
-        address winnerAddress = participants[randomValue % participants.length];
+        address winnerAddress = participantAddresses[randomValue % participantAddresses.length];
 
         // Tell the chain who won (the front-ends and scripts rely on this)
-        emit lotterWinner(winnerAddress, monetaryPrize);
+        emit lotterWinner(winnerAddress, uint64(prizePool));
 
         // SAFETY: Lock the lottery so no second payout happens
         ended = true;
 
         // EDGE CASE: Make sure the prize exists before sending
-        require(amountToSend > 0, "No prize money set.");
+        require(prizePool > 0, "No prize money set.");
 
         // Send prize money to the winner
-        payable(winnerAddress).transfer(amountToSend);
+        uint256 prize = prizePool;
+        payable(winnerAddress).transfer(prize);
 
-        // Clear the prize for next round
-        amountToSend = 0;
-
-        // Resetting the draw flag so a new one can be started later
+        // Reset state for next round
+        prizePool = 0;
+        totalTickets = 0;
         drawInitiated = false;
+        ended = false;
+
+        // Clear participant addresses
+        for (uint256 i = 0; i < participantAddresses.length; i++) {
+            delete participantsToTickets[participantAddresses[i]];
+        }
+        delete participantAddresses;
     }
 
     /// Checks if a user is signed up for the lottery.
@@ -278,7 +283,7 @@ contract Lottery is ILottery {
     /// @param user The address to check for participation.
     /// @return bool Returns true if the user has joined, false otherwise.
     function getParticipantStatus(address user) public view returns (bool) {
-        return participantsToTickets[user];
+        return participantsToTickets[user].hasJoined;
     }
 
     /// Replaced the for loop in getParticipant with a direct mapping lookup. The old method got slower as more participants joined, so this keeps it fast regardless of size.
