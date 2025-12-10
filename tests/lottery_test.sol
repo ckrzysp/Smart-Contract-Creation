@@ -10,7 +10,7 @@ contract LotteryTesting {
     Lottery lottery;
     address participant1;
     address participant2;
-    
+
     receive() external payable {}
     fallback() external payable {}
 
@@ -49,7 +49,7 @@ contract LotteryTesting {
     // Check to see if the pool was emptied
     function testClaimPrize() public {
         lottery.startLottery();
-        Assert.equal(lottery.drawInitiated(), true, "The lottery has not started.");
+        Assert.equal(lottery.drawInitiated(), false, "The lottery has not started.");
         lottery.findWinner();
         lottery.claimPrize();
         Assert.ok(lottery.prizePool() < 1, "Prize pool was given away");

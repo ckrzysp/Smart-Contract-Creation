@@ -1,0 +1,96 @@
+{
+	"compiler": {
+		"version": "0.8.31+commit.fd3a2265"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [
+					{
+						"internalType": "contract Lottery",
+						"name": "lottery",
+						"type": "address"
+					},
+					{
+						"internalType": "uint8[5]",
+						"name": "numbers",
+						"type": "uint8[5]"
+					}
+				],
+				"name": "buyTicketFor",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contract/Participant.sol": "ParticipantProxy"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contract/ILottery.sol": {
+			"keccak256": "0xf87bd024f4e3069731d9fb7f0456c9454d196de807c745b0e6a85a0c6364e095",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://280c9083f383378fd8465ac825bfeae744a2c6d4fba2a47b9d8991da4064cc4f",
+				"dweb:/ipfs/QmPcxMfp2r8eymU3LkJq4nfsqmN6yu7iwoYj1yGsaYVcz1"
+			]
+		},
+		"contract/Lottery.sol": {
+			"keccak256": "0x0b7d99db802e16d9ea100448681a8e9f46c38bc549a6ac04afb18b2407bdd53b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e72eb19f7a5d0fafbe4a8b1a3ae0cfc012a0b7d75bf56a8b3bb98e8129f54a71",
+				"dweb:/ipfs/QmTnru1Qe1T26RC9vgKjhhxHTmozxMTxbASYHPHBuUUpVj"
+			]
+		},
+		"contract/Participant.sol": {
+			"keccak256": "0xa12b98a7b890c184dec8884af51f0eebc8b7e3714117271bc42222a9dd0c2e6a",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://29eec5751e330356252ba36792c4318c85a64f6a9ec5668b9972fd21f5e6bd5e",
+				"dweb:/ipfs/QmQQrqndaewaP5wYbk6UHaoFFNUGQ5s6acQ97zSUzcuySo"
+			]
+		},
+		"contract/Player.sol": {
+			"keccak256": "0xa3f6657712a386df24584ea143d440e8c083c13763cecbc95ff78773256f2537",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://66395884570cb50da93770cb2a140661e7ce19452486999d65df4ee44f4a9ed4",
+				"dweb:/ipfs/QmQZLdVtNov1e3v5QzhQ9BgaMamGizE38MZAoBDDC5iNJy"
+			]
+		},
+		"utils/Utils.sol": {
+			"keccak256": "0xc4838f06ab50477e6affa690f8e7d0edb3ec2b976a77b84401861cd047aec418",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6d118ee059d6648f3d747c0b8a658da90375535bd4f0b9eaf4ca1a41a2e6829f",
+				"dweb:/ipfs/QmSwuMbwTYbwTq6QxMp5YjZLN4RwuzYCxzcNXVe32jwFZZ"
+			]
+		}
+	},
+	"version": 1
+}
