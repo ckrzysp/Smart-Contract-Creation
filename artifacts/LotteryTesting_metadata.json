@@ -1,0 +1,136 @@
+{
+	"compiler": {
+		"version": "0.8.31+commit.fd3a2265"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"inputs": [],
+				"name": "beforeEach",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "testBuyIn",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "testHostIsOwner",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "testPrizePool",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "testStartLottery",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "testWinning",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"kind": "dev",
+			"methods": {},
+			"version": 1
+		},
+		"userdoc": {
+			"kind": "user",
+			"methods": {},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"tests/lottery_test.sol": "LotteryTesting"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contract/ILottery.sol": {
+			"keccak256": "0xf87bd024f4e3069731d9fb7f0456c9454d196de807c745b0e6a85a0c6364e095",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://280c9083f383378fd8465ac825bfeae744a2c6d4fba2a47b9d8991da4064cc4f",
+				"dweb:/ipfs/QmPcxMfp2r8eymU3LkJq4nfsqmN6yu7iwoYj1yGsaYVcz1"
+			]
+		},
+		"contract/Lottery.sol": {
+			"keccak256": "0x0b7d99db802e16d9ea100448681a8e9f46c38bc549a6ac04afb18b2407bdd53b",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://e72eb19f7a5d0fafbe4a8b1a3ae0cfc012a0b7d75bf56a8b3bb98e8129f54a71",
+				"dweb:/ipfs/QmTnru1Qe1T26RC9vgKjhhxHTmozxMTxbASYHPHBuUUpVj"
+			]
+		},
+		"contract/Player.sol": {
+			"keccak256": "0xa3f6657712a386df24584ea143d440e8c083c13763cecbc95ff78773256f2537",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://66395884570cb50da93770cb2a140661e7ce19452486999d65df4ee44f4a9ed4",
+				"dweb:/ipfs/QmQZLdVtNov1e3v5QzhQ9BgaMamGizE38MZAoBDDC5iNJy"
+			]
+		},
+		"remix_accounts.sol": {
+			"keccak256": "0xab088ffd1cd1033f54c2486f151b5d02281a3b76724c8e6f48479c25a4f7809e",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://5ddaf9976b1838f7028cbedfaf7f6e1cf8c898e100221176ff1406ee8b599f23",
+				"dweb:/ipfs/QmX2FYLXYyo5Cn55ZX2CfngpscSh4mQhcMVzQdQsh2vqcG"
+			]
+		},
+		"remix_tests.sol": {
+			"keccak256": "0xe2783cdc204cba8c72494119339f1d90f9022b15d6c718c668b7f097d8e29787",
+			"license": "GPL-3.0",
+			"urls": [
+				"bzz-raw://bb6a22e64c7f16bcaab63b1c1a1b269d5be8a6d37bdd9dec1718477ab916b18e",
+				"dweb:/ipfs/QmdkW1tT5iadBvaHMCoskhDGZKnfdg8o1D9CcoQYtdJet7"
+			]
+		},
+		"tests/lottery_test.sol": {
+			"keccak256": "0x05794489ed35e8dab98f26ee4c2f5f4209e0e8234e06c51488ccf6f801961edc",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://498c83c389f402ffd2e8527707ff9f790fb96a7e32456a458318f9fc31708a96",
+				"dweb:/ipfs/Qmf5DsnVi2vDktkjVfsJhSLShzADyW2ADdPi86DgCLi3vZ"
+			]
+		},
+		"utils/Utils.sol": {
+			"keccak256": "0xc4838f06ab50477e6affa690f8e7d0edb3ec2b976a77b84401861cd047aec418",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://6d118ee059d6648f3d747c0b8a658da90375535bd4f0b9eaf4ca1a41a2e6829f",
+				"dweb:/ipfs/QmSwuMbwTYbwTq6QxMp5YjZLN4RwuzYCxzcNXVe32jwFZZ"
+			]
+		}
+	},
+	"version": 1
+}

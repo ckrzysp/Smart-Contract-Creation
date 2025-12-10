@@ -1,0 +1,2171 @@
+{
+	"id": "677482c99ea7c74413f21321efc2c438",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.31",
+	"solcLongVersion": "0.8.31+commit.fd3a2265",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"contract/ILottery.sol": {
+				"content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\nimport \"contract/Player.sol\";\n\ninterface ILottery {\n    /// @notice Emitted when a participant joins the lottery\n    /// @param prtcpt The address of the participant\n    /// @param alert Alert message\n    event participantJoined(address prtcpt, string alert);\n\n    /// @notice Emitted when a winner is selected\n    /// @param winner The address of the winner\n    /// @param prize The prize amount won\n    event lotterWinner(address winner, uint64 prize);\n\n    /// @notice Update the draw interval (time between draws)\n    /// @param _interval New interval in seconds (must be between 1-30 days)\n    function setDrawInterval(uint256 _interval) external;\n\n    /// @notice Update the minimum number of participants required\n    /// @param _minParticipants New minimum (must be between 2-100)\n    function setMinParticipants(uint16 _minParticipants) external;\n\n    /// @notice Update the minimum number of tickets required\n    /// @param _minTickets New minimum (must be >= minParticipants)\n    function setMinTicketsSold(uint16 _minTickets) external;\n\n    /// @notice Update the maximum tickets per draw (triggers early draw)\n    /// @param _maxTickets New maximum (must be >= minTicketsSold)\n    function setMaxTicketsPerDraw(uint16 _maxTickets) external;\n\n    /// @notice Buy a lottery ticket with chosen numbers\n    /// @param ticketNumbers Array of 5 unique numbers (1-99)\n    function buyTicket(uint8[5] calldata ticketNumbers) external payable;\n\n    /// @notice Start the lottery draw process\n    /// @dev Can only be called when minimum requirements are met and trigger conditions satisfied\n    function startLottery() external;\n\n    /// @notice Finalize the lottery and select a winner\n    /// @dev Must be called after startLottery() and after the target block is reached\n    function findWinner() external;\n\n    /// @notice Check if a user has joined the current lottery\n    /// @param user The address to check\n    /// @return True if the user has joined, false otherwise\n    function getParticipantStatus(address user) external view returns (bool);\n\n    /// @notice Get participant's ticket information\n    /// @param user The address to query\n    /// @return Player struct containing ticket data\n    function participantsToTickets(\n        address user\n    ) external view returns (Player memory);\n\n    /// @notice Get the contract host address\n    /// @return The host's address\n    function host() external view returns (address payable);\n\n    /// @notice Get the current prize pool\n    /// @return The prize pool amount\n    function prizePool() external view returns (uint32);\n\n    /// @notice Get the ticket cost\n    /// @return The cost per ticket\n    function ticketCost() external view returns (uint32);\n\n    /// @notice Get the block number for randomness\n    /// @return The target block number\n    function drawBlockNumber() external view returns (uint256);\n\n    /// @notice Check if a draw has been initiated\n    /// @return True if draw is in progress\n    function drawInitiated() external view returns (bool);\n\n    /// @notice Get the timestamp of the last draw\n    /// @return Unix timestamp\n    function lastDrawTime() external view returns (uint256);\n\n    /// @notice Get the draw interval\n    /// @return Time in seconds between draws\n    function drawInterval() external view returns (uint256);\n\n    /// @notice Get minimum participants required\n    /// @return Minimum number of participants\n    function minParticipants() external view returns (uint16);\n\n    /// @notice Get minimum tickets required\n    /// @return Minimum number of tickets\n    function minTicketsSold() external view returns (uint16);\n\n    /// @notice Get maximum tickets per draw\n    /// @return Maximum tickets before early trigger\n    function maxTicketsPerDraw() external view returns (uint16);\n}\n"
+			},
+			"contract/Player.sol": {
+				"content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\nstruct Player {\n    uint8[5][] ticketNumbers;\n    bool hasJoined;\n    uint16 numberOfTickets;\n}"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": false,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"": [
+						"ast"
+					],
+					"*": [
+						"abi",
+						"metadata",
+						"devdoc",
+						"userdoc",
+						"storageLayout",
+						"evm.legacyAssembly",
+						"evm.bytecode",
+						"evm.deployedBytecode",
+						"evm.methodIdentifiers",
+						"evm.gasEstimates",
+						"evm.assembly"
+					]
+				}
+			},
+			"remappings": []
+		}
+	},
+	"output": {
+		"contracts": {
+			"contract/ILottery.sol": {
+				"ILottery": {
+					"abi": [
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": false,
+									"internalType": "address",
+									"name": "winner",
+									"type": "address"
+								},
+								{
+									"indexed": false,
+									"internalType": "uint64",
+									"name": "prize",
+									"type": "uint64"
+								}
+							],
+							"name": "lotterWinner",
+							"type": "event"
+						},
+						{
+							"anonymous": false,
+							"inputs": [
+								{
+									"indexed": false,
+									"internalType": "address",
+									"name": "prtcpt",
+									"type": "address"
+								},
+								{
+									"indexed": false,
+									"internalType": "string",
+									"name": "alert",
+									"type": "string"
+								}
+							],
+							"name": "participantJoined",
+							"type": "event"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint8[5]",
+									"name": "ticketNumbers",
+									"type": "uint8[5]"
+								}
+							],
+							"name": "buyTicket",
+							"outputs": [],
+							"stateMutability": "payable",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "drawBlockNumber",
+							"outputs": [
+								{
+									"internalType": "uint256",
+									"name": "",
+									"type": "uint256"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "drawInitiated",
+							"outputs": [
+								{
+									"internalType": "bool",
+									"name": "",
+									"type": "bool"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "drawInterval",
+							"outputs": [
+								{
+									"internalType": "uint256",
+									"name": "",
+									"type": "uint256"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "findWinner",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "address",
+									"name": "user",
+									"type": "address"
+								}
+							],
+							"name": "getParticipantStatus",
+							"outputs": [
+								{
+									"internalType": "bool",
+									"name": "",
+									"type": "bool"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "host",
+							"outputs": [
+								{
+									"internalType": "address payable",
+									"name": "",
+									"type": "address"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "lastDrawTime",
+							"outputs": [
+								{
+									"internalType": "uint256",
+									"name": "",
+									"type": "uint256"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "maxTicketsPerDraw",
+							"outputs": [
+								{
+									"internalType": "uint16",
+									"name": "",
+									"type": "uint16"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "minParticipants",
+							"outputs": [
+								{
+									"internalType": "uint16",
+									"name": "",
+									"type": "uint16"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "minTicketsSold",
+							"outputs": [
+								{
+									"internalType": "uint16",
+									"name": "",
+									"type": "uint16"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "address",
+									"name": "user",
+									"type": "address"
+								}
+							],
+							"name": "participantsToTickets",
+							"outputs": [
+								{
+									"components": [
+										{
+											"internalType": "uint8[5][]",
+											"name": "ticketNumbers",
+											"type": "uint8[5][]"
+										},
+										{
+											"internalType": "bool",
+											"name": "hasJoined",
+											"type": "bool"
+										},
+										{
+											"internalType": "uint16",
+											"name": "numberOfTickets",
+											"type": "uint16"
+										}
+									],
+									"internalType": "struct Player",
+									"name": "",
+									"type": "tuple"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "prizePool",
+							"outputs": [
+								{
+									"internalType": "uint32",
+									"name": "",
+									"type": "uint32"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint256",
+									"name": "_interval",
+									"type": "uint256"
+								}
+							],
+							"name": "setDrawInterval",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint16",
+									"name": "_maxTickets",
+									"type": "uint16"
+								}
+							],
+							"name": "setMaxTicketsPerDraw",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint16",
+									"name": "_minParticipants",
+									"type": "uint16"
+								}
+							],
+							"name": "setMinParticipants",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [
+								{
+									"internalType": "uint16",
+									"name": "_minTickets",
+									"type": "uint16"
+								}
+							],
+							"name": "setMinTicketsSold",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "startLottery",
+							"outputs": [],
+							"stateMutability": "nonpayable",
+							"type": "function"
+						},
+						{
+							"inputs": [],
+							"name": "ticketCost",
+							"outputs": [
+								{
+									"internalType": "uint32",
+									"name": "",
+									"type": "uint32"
+								}
+							],
+							"stateMutability": "view",
+							"type": "function"
+						}
+					],
+					"devdoc": {
+						"events": {
+							"lotterWinner(address,uint64)": {
+								"params": {
+									"prize": "The prize amount won",
+									"winner": "The address of the winner"
+								}
+							},
+							"participantJoined(address,string)": {
+								"params": {
+									"alert": "Alert message",
+									"prtcpt": "The address of the participant"
+								}
+							}
+						},
+						"kind": "dev",
+						"methods": {
+							"buyTicket(uint8[5])": {
+								"params": {
+									"ticketNumbers": "Array of 5 unique numbers (1-99)"
+								}
+							},
+							"drawBlockNumber()": {
+								"returns": {
+									"_0": "The target block number"
+								}
+							},
+							"drawInitiated()": {
+								"returns": {
+									"_0": "True if draw is in progress"
+								}
+							},
+							"drawInterval()": {
+								"returns": {
+									"_0": "Time in seconds between draws"
+								}
+							},
+							"findWinner()": {
+								"details": "Must be called after startLottery() and after the target block is reached"
+							},
+							"getParticipantStatus(address)": {
+								"params": {
+									"user": "The address to check"
+								},
+								"returns": {
+									"_0": "True if the user has joined, false otherwise"
+								}
+							},
+							"host()": {
+								"returns": {
+									"_0": "The host's address"
+								}
+							},
+							"lastDrawTime()": {
+								"returns": {
+									"_0": "Unix timestamp"
+								}
+							},
+							"maxTicketsPerDraw()": {
+								"returns": {
+									"_0": "Maximum tickets before early trigger"
+								}
+							},
+							"minParticipants()": {
+								"returns": {
+									"_0": "Minimum number of participants"
+								}
+							},
+							"minTicketsSold()": {
+								"returns": {
+									"_0": "Minimum number of tickets"
+								}
+							},
+							"participantsToTickets(address)": {
+								"params": {
+									"user": "The address to query"
+								},
+								"returns": {
+									"_0": "Player struct containing ticket data"
+								}
+							},
+							"prizePool()": {
+								"returns": {
+									"_0": "The prize pool amount"
+								}
+							},
+							"setDrawInterval(uint256)": {
+								"params": {
+									"_interval": "New interval in seconds (must be between 1-30 days)"
+								}
+							},
+							"setMaxTicketsPerDraw(uint16)": {
+								"params": {
+									"_maxTickets": "New maximum (must be >= minTicketsSold)"
+								}
+							},
+							"setMinParticipants(uint16)": {
+								"params": {
+									"_minParticipants": "New minimum (must be between 2-100)"
+								}
+							},
+							"setMinTicketsSold(uint16)": {
+								"params": {
+									"_minTickets": "New minimum (must be >= minParticipants)"
+								}
+							},
+							"startLottery()": {
+								"details": "Can only be called when minimum requirements are met and trigger conditions satisfied"
+							},
+							"ticketCost()": {
+								"returns": {
+									"_0": "The cost per ticket"
+								}
+							}
+						},
+						"version": 1
+					},
+					"evm": {
+						"assembly": "",
+						"bytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"linkReferences": {},
+							"object": "",
+							"opcodes": "",
+							"sourceMap": ""
+						},
+						"deployedBytecode": {
+							"functionDebugData": {},
+							"generatedSources": [],
+							"immutableReferences": {},
+							"linkReferences": {},
+							"object": "",
+							"opcodes": "",
+							"sourceMap": ""
+						},
+						"gasEstimates": null,
+						"legacyAssembly": null,
+						"methodIdentifiers": {
+							"buyTicket(uint8[5])": "cc957f28",
+							"drawBlockNumber()": "c5150950",
+							"drawInitiated()": "87bc3996",
+							"drawInterval()": "bc06c4cc",
+							"findWinner()": "8e71decb",
+							"getParticipantStatus(address)": "278a5ff2",
+							"host()": "f437bc59",
+							"lastDrawTime()": "5cbbd635",
+							"maxTicketsPerDraw()": "ec8f0b5b",
+							"minParticipants()": "a54cd4f7",
+							"minTicketsSold()": "c59bc765",
+							"participantsToTickets(address)": "bff45ed9",
+							"prizePool()": "719ce73e",
+							"setDrawInterval(uint256)": "f5a9d5bb",
+							"setMaxTicketsPerDraw(uint16)": "63ed426d",
+							"setMinParticipants(uint16)": "dabc4000",
+							"setMinTicketsSold(uint16)": "7535d791",
+							"startLottery()": "160344e2",
+							"ticketCost()": "1eecd934"
+						}
+					},
+					"metadata": "{\"compiler\":{\"version\":\"0.8.31+commit.fd3a2265\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"winner\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"uint64\",\"name\":\"prize\",\"type\":\"uint64\"}],\"name\":\"lotterWinner\",\"type\":\"event\"},{\"anonymous\":false,\"inputs\":[{\"indexed\":false,\"internalType\":\"address\",\"name\":\"prtcpt\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"string\",\"name\":\"alert\",\"type\":\"string\"}],\"name\":\"participantJoined\",\"type\":\"event\"},{\"inputs\":[{\"internalType\":\"uint8[5]\",\"name\":\"ticketNumbers\",\"type\":\"uint8[5]\"}],\"name\":\"buyTicket\",\"outputs\":[],\"stateMutability\":\"payable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"drawBlockNumber\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"drawInitiated\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"drawInterval\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"findWinner\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"getParticipantStatus\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"host\",\"outputs\":[{\"internalType\":\"address payable\",\"name\":\"\",\"type\":\"address\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"lastDrawTime\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"maxTicketsPerDraw\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"minParticipants\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"minTicketsSold\",\"outputs\":[{\"internalType\":\"uint16\",\"name\":\"\",\"type\":\"uint16\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"address\",\"name\":\"user\",\"type\":\"address\"}],\"name\":\"participantsToTickets\",\"outputs\":[{\"components\":[{\"internalType\":\"uint8[5][]\",\"name\":\"ticketNumbers\",\"type\":\"uint8[5][]\"},{\"internalType\":\"bool\",\"name\":\"hasJoined\",\"type\":\"bool\"},{\"internalType\":\"uint16\",\"name\":\"numberOfTickets\",\"type\":\"uint16\"}],\"internalType\":\"struct Player\",\"name\":\"\",\"type\":\"tuple\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"prizePool\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"_interval\",\"type\":\"uint256\"}],\"name\":\"setDrawInterval\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint16\",\"name\":\"_maxTickets\",\"type\":\"uint16\"}],\"name\":\"setMaxTicketsPerDraw\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint16\",\"name\":\"_minParticipants\",\"type\":\"uint16\"}],\"name\":\"setMinParticipants\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[{\"internalType\":\"uint16\",\"name\":\"_minTickets\",\"type\":\"uint16\"}],\"name\":\"setMinTicketsSold\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"startLottery\",\"outputs\":[],\"stateMutability\":\"nonpayable\",\"type\":\"function\"},{\"inputs\":[],\"name\":\"ticketCost\",\"outputs\":[{\"internalType\":\"uint32\",\"name\":\"\",\"type\":\"uint32\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"events\":{\"lotterWinner(address,uint64)\":{\"params\":{\"prize\":\"The prize amount won\",\"winner\":\"The address of the winner\"}},\"participantJoined(address,string)\":{\"params\":{\"alert\":\"Alert message\",\"prtcpt\":\"The address of the participant\"}}},\"kind\":\"dev\",\"methods\":{\"buyTicket(uint8[5])\":{\"params\":{\"ticketNumbers\":\"Array of 5 unique numbers (1-99)\"}},\"drawBlockNumber()\":{\"returns\":{\"_0\":\"The target block number\"}},\"drawInitiated()\":{\"returns\":{\"_0\":\"True if draw is in progress\"}},\"drawInterval()\":{\"returns\":{\"_0\":\"Time in seconds between draws\"}},\"findWinner()\":{\"details\":\"Must be called after startLottery() and after the target block is reached\"},\"getParticipantStatus(address)\":{\"params\":{\"user\":\"The address to check\"},\"returns\":{\"_0\":\"True if the user has joined, false otherwise\"}},\"host()\":{\"returns\":{\"_0\":\"The host's address\"}},\"lastDrawTime()\":{\"returns\":{\"_0\":\"Unix timestamp\"}},\"maxTicketsPerDraw()\":{\"returns\":{\"_0\":\"Maximum tickets before early trigger\"}},\"minParticipants()\":{\"returns\":{\"_0\":\"Minimum number of participants\"}},\"minTicketsSold()\":{\"returns\":{\"_0\":\"Minimum number of tickets\"}},\"participantsToTickets(address)\":{\"params\":{\"user\":\"The address to query\"},\"returns\":{\"_0\":\"Player struct containing ticket data\"}},\"prizePool()\":{\"returns\":{\"_0\":\"The prize pool amount\"}},\"setDrawInterval(uint256)\":{\"params\":{\"_interval\":\"New interval in seconds (must be between 1-30 days)\"}},\"setMaxTicketsPerDraw(uint16)\":{\"params\":{\"_maxTickets\":\"New maximum (must be >= minTicketsSold)\"}},\"setMinParticipants(uint16)\":{\"params\":{\"_minParticipants\":\"New minimum (must be between 2-100)\"}},\"setMinTicketsSold(uint16)\":{\"params\":{\"_minTickets\":\"New minimum (must be >= minParticipants)\"}},\"startLottery()\":{\"details\":\"Can only be called when minimum requirements are met and trigger conditions satisfied\"},\"ticketCost()\":{\"returns\":{\"_0\":\"The cost per ticket\"}}},\"version\":1},\"userdoc\":{\"events\":{\"lotterWinner(address,uint64)\":{\"notice\":\"Emitted when a winner is selected\"},\"participantJoined(address,string)\":{\"notice\":\"Emitted when a participant joins the lottery\"}},\"kind\":\"user\",\"methods\":{\"buyTicket(uint8[5])\":{\"notice\":\"Buy a lottery ticket with chosen numbers\"},\"drawBlockNumber()\":{\"notice\":\"Get the block number for randomness\"},\"drawInitiated()\":{\"notice\":\"Check if a draw has been initiated\"},\"drawInterval()\":{\"notice\":\"Get the draw interval\"},\"findWinner()\":{\"notice\":\"Finalize the lottery and select a winner\"},\"getParticipantStatus(address)\":{\"notice\":\"Check if a user has joined the current lottery\"},\"host()\":{\"notice\":\"Get the contract host address\"},\"lastDrawTime()\":{\"notice\":\"Get the timestamp of the last draw\"},\"maxTicketsPerDraw()\":{\"notice\":\"Get maximum tickets per draw\"},\"minParticipants()\":{\"notice\":\"Get minimum participants required\"},\"minTicketsSold()\":{\"notice\":\"Get minimum tickets required\"},\"participantsToTickets(address)\":{\"notice\":\"Get participant's ticket information\"},\"prizePool()\":{\"notice\":\"Get the current prize pool\"},\"setDrawInterval(uint256)\":{\"notice\":\"Update the draw interval (time between draws)\"},\"setMaxTicketsPerDraw(uint16)\":{\"notice\":\"Update the maximum tickets per draw (triggers early draw)\"},\"setMinParticipants(uint16)\":{\"notice\":\"Update the minimum number of participants required\"},\"setMinTicketsSold(uint16)\":{\"notice\":\"Update the minimum number of tickets required\"},\"startLottery()\":{\"notice\":\"Start the lottery draw process\"},\"ticketCost()\":{\"notice\":\"Get the ticket cost\"}},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contract/ILottery.sol\":\"ILottery\"},\"evmVersion\":\"osaka\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\"},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"contract/ILottery.sol\":{\"keccak256\":\"0x2aa53f85de5735f20291d37c164248ac91e8e5680857a4970ccb22a2d7809bf8\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://46cc36eb0b010dfbe8ad390c6ec9ee01391538e2f5a6b6c3b121bfe2412bca32\",\"dweb:/ipfs/QmfBFr1WpnkTiPeQehspr3qEgGfuj95m4GnHW3tDjq2BmN\"]},\"contract/Player.sol\":{\"keccak256\":\"0xa3f6657712a386df24584ea143d440e8c083c13763cecbc95ff78773256f2537\",\"license\":\"MIT\",\"urls\":[\"bzz-raw://66395884570cb50da93770cb2a140661e7ce19452486999d65df4ee44f4a9ed4\",\"dweb:/ipfs/QmQZLdVtNov1e3v5QzhQ9BgaMamGizE38MZAoBDDC5iNJy\"]}},\"version\":1}",
+					"storageLayout": {
+						"storage": [],
+						"types": null
+					},
+					"userdoc": {
+						"events": {
+							"lotterWinner(address,uint64)": {
+								"notice": "Emitted when a winner is selected"
+							},
+							"participantJoined(address,string)": {
+								"notice": "Emitted when a participant joins the lottery"
+							}
+						},
+						"kind": "user",
+						"methods": {
+							"buyTicket(uint8[5])": {
+								"notice": "Buy a lottery ticket with chosen numbers"
+							},
+							"drawBlockNumber()": {
+								"notice": "Get the block number for randomness"
+							},
+							"drawInitiated()": {
+								"notice": "Check if a draw has been initiated"
+							},
+							"drawInterval()": {
+								"notice": "Get the draw interval"
+							},
+							"findWinner()": {
+								"notice": "Finalize the lottery and select a winner"
+							},
+							"getParticipantStatus(address)": {
+								"notice": "Check if a user has joined the current lottery"
+							},
+							"host()": {
+								"notice": "Get the contract host address"
+							},
+							"lastDrawTime()": {
+								"notice": "Get the timestamp of the last draw"
+							},
+							"maxTicketsPerDraw()": {
+								"notice": "Get maximum tickets per draw"
+							},
+							"minParticipants()": {
+								"notice": "Get minimum participants required"
+							},
+							"minTicketsSold()": {
+								"notice": "Get minimum tickets required"
+							},
+							"participantsToTickets(address)": {
+								"notice": "Get participant's ticket information"
+							},
+							"prizePool()": {
+								"notice": "Get the current prize pool"
+							},
+							"setDrawInterval(uint256)": {
+								"notice": "Update the draw interval (time between draws)"
+							},
+							"setMaxTicketsPerDraw(uint16)": {
+								"notice": "Update the maximum tickets per draw (triggers early draw)"
+							},
+							"setMinParticipants(uint16)": {
+								"notice": "Update the minimum number of participants required"
+							},
+							"setMinTicketsSold(uint16)": {
+								"notice": "Update the minimum number of tickets required"
+							},
+							"startLottery()": {
+								"notice": "Start the lottery draw process"
+							},
+							"ticketCost()": {
+								"notice": "Get the ticket cost"
+							}
+						},
+						"version": 1
+					}
+				}
+			}
+		},
+		"sources": {
+			"contract/ILottery.sol": {
+				"ast": {
+					"absolutePath": "contract/ILottery.sol",
+					"exportedSymbols": {
+						"ILottery": [
+							134
+						],
+						"Player": [
+							146
+						]
+					},
+					"id": 135,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 1,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".18"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "32:24:0"
+						},
+						{
+							"absolutePath": "contract/Player.sol",
+							"file": "contract/Player.sol",
+							"id": 2,
+							"nameLocation": "-1:-1:-1",
+							"nodeType": "ImportDirective",
+							"scope": 135,
+							"sourceUnit": 147,
+							"src": "58:29:0",
+							"symbolAliases": [],
+							"unitAlias": ""
+						},
+						{
+							"abstract": false,
+							"baseContracts": [],
+							"canonicalName": "ILottery",
+							"contractDependencies": [],
+							"contractKind": "interface",
+							"fullyImplemented": false,
+							"id": 134,
+							"linearizedBaseContracts": [
+								134
+							],
+							"name": "ILottery",
+							"nameLocation": "99:8:0",
+							"nodeType": "ContractDefinition",
+							"nodes": [
+								{
+									"anonymous": false,
+									"documentation": {
+										"id": 3,
+										"nodeType": "StructuredDocumentation",
+										"src": "114:144:0",
+										"text": "@notice Emitted when a participant joins the lottery\n @param prtcpt The address of the participant\n @param alert Alert message"
+									},
+									"eventSelector": "5d7fe1cbbc608689987406644ee6a48ea79e623710c4c184fc02aa6370ad5ed6",
+									"id": 9,
+									"name": "participantJoined",
+									"nameLocation": "269:17:0",
+									"nodeType": "EventDefinition",
+									"parameters": {
+										"id": 8,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 5,
+												"indexed": false,
+												"mutability": "mutable",
+												"name": "prtcpt",
+												"nameLocation": "295:6:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 9,
+												"src": "287:14:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_address",
+													"typeString": "address"
+												},
+												"typeName": {
+													"id": 4,
+													"name": "address",
+													"nodeType": "ElementaryTypeName",
+													"src": "287:7:0",
+													"stateMutability": "nonpayable",
+													"typeDescriptions": {
+														"typeIdentifier": "t_address",
+														"typeString": "address"
+													}
+												},
+												"visibility": "internal"
+											},
+											{
+												"constant": false,
+												"id": 7,
+												"indexed": false,
+												"mutability": "mutable",
+												"name": "alert",
+												"nameLocation": "310:5:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 9,
+												"src": "303:12:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_string_memory_ptr",
+													"typeString": "string"
+												},
+												"typeName": {
+													"id": 6,
+													"name": "string",
+													"nodeType": "ElementaryTypeName",
+													"src": "303:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_string_storage_ptr",
+														"typeString": "string"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "286:30:0"
+									},
+									"src": "263:54:0"
+								},
+								{
+									"anonymous": false,
+									"documentation": {
+										"id": 10,
+										"nodeType": "StructuredDocumentation",
+										"src": "323:135:0",
+										"text": "@notice Emitted when a winner is selected\n @param winner The address of the winner\n @param prize The prize amount won"
+									},
+									"eventSelector": "6f2ef2e5aa9339a9d2fc1e8c9b2924cd1e974fd3dbd59f2d86f241820b7dbd76",
+									"id": 16,
+									"name": "lotterWinner",
+									"nameLocation": "469:12:0",
+									"nodeType": "EventDefinition",
+									"parameters": {
+										"id": 15,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 12,
+												"indexed": false,
+												"mutability": "mutable",
+												"name": "winner",
+												"nameLocation": "490:6:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 16,
+												"src": "482:14:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_address",
+													"typeString": "address"
+												},
+												"typeName": {
+													"id": 11,
+													"name": "address",
+													"nodeType": "ElementaryTypeName",
+													"src": "482:7:0",
+													"stateMutability": "nonpayable",
+													"typeDescriptions": {
+														"typeIdentifier": "t_address",
+														"typeString": "address"
+													}
+												},
+												"visibility": "internal"
+											},
+											{
+												"constant": false,
+												"id": 14,
+												"indexed": false,
+												"mutability": "mutable",
+												"name": "prize",
+												"nameLocation": "505:5:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 16,
+												"src": "498:12:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint64",
+													"typeString": "uint64"
+												},
+												"typeName": {
+													"id": 13,
+													"name": "uint64",
+													"nodeType": "ElementaryTypeName",
+													"src": "498:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint64",
+														"typeString": "uint64"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "481:30:0"
+									},
+									"src": "463:49:0"
+								},
+								{
+									"documentation": {
+										"id": 17,
+										"nodeType": "StructuredDocumentation",
+										"src": "518:134:0",
+										"text": "@notice Update the draw interval (time between draws)\n @param _interval New interval in seconds (must be between 1-30 days)"
+									},
+									"functionSelector": "f5a9d5bb",
+									"id": 22,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "setDrawInterval",
+									"nameLocation": "666:15:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 20,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 19,
+												"mutability": "mutable",
+												"name": "_interval",
+												"nameLocation": "690:9:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 22,
+												"src": "682:17:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 18,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "682:7:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "681:19:0"
+									},
+									"returnParameters": {
+										"id": 21,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "709:0:0"
+									},
+									"scope": 134,
+									"src": "657:53:0",
+									"stateMutability": "nonpayable",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 23,
+										"nodeType": "StructuredDocumentation",
+										"src": "716:130:0",
+										"text": "@notice Update the minimum number of participants required\n @param _minParticipants New minimum (must be between 2-100)"
+									},
+									"functionSelector": "dabc4000",
+									"id": 28,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "setMinParticipants",
+									"nameLocation": "860:18:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 26,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 25,
+												"mutability": "mutable",
+												"name": "_minParticipants",
+												"nameLocation": "886:16:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 28,
+												"src": "879:23:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint16",
+													"typeString": "uint16"
+												},
+												"typeName": {
+													"id": 24,
+													"name": "uint16",
+													"nodeType": "ElementaryTypeName",
+													"src": "879:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint16",
+														"typeString": "uint16"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "878:25:0"
+									},
+									"returnParameters": {
+										"id": 27,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "912:0:0"
+									},
+									"scope": 134,
+									"src": "851:62:0",
+									"stateMutability": "nonpayable",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 29,
+										"nodeType": "StructuredDocumentation",
+										"src": "919:125:0",
+										"text": "@notice Update the minimum number of tickets required\n @param _minTickets New minimum (must be >= minParticipants)"
+									},
+									"functionSelector": "7535d791",
+									"id": 34,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "setMinTicketsSold",
+									"nameLocation": "1058:17:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 32,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 31,
+												"mutability": "mutable",
+												"name": "_minTickets",
+												"nameLocation": "1083:11:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 34,
+												"src": "1076:18:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint16",
+													"typeString": "uint16"
+												},
+												"typeName": {
+													"id": 30,
+													"name": "uint16",
+													"nodeType": "ElementaryTypeName",
+													"src": "1076:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint16",
+														"typeString": "uint16"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "1075:20:0"
+									},
+									"returnParameters": {
+										"id": 33,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "1104:0:0"
+									},
+									"scope": 134,
+									"src": "1049:56:0",
+									"stateMutability": "nonpayable",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 35,
+										"nodeType": "StructuredDocumentation",
+										"src": "1111:136:0",
+										"text": "@notice Update the maximum tickets per draw (triggers early draw)\n @param _maxTickets New maximum (must be >= minTicketsSold)"
+									},
+									"functionSelector": "63ed426d",
+									"id": 40,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "setMaxTicketsPerDraw",
+									"nameLocation": "1261:20:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 38,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 37,
+												"mutability": "mutable",
+												"name": "_maxTickets",
+												"nameLocation": "1289:11:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 40,
+												"src": "1282:18:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint16",
+													"typeString": "uint16"
+												},
+												"typeName": {
+													"id": 36,
+													"name": "uint16",
+													"nodeType": "ElementaryTypeName",
+													"src": "1282:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint16",
+														"typeString": "uint16"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "1281:20:0"
+									},
+									"returnParameters": {
+										"id": 39,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "1310:0:0"
+									},
+									"scope": 134,
+									"src": "1252:59:0",
+									"stateMutability": "nonpayable",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 41,
+										"nodeType": "StructuredDocumentation",
+										"src": "1317:114:0",
+										"text": "@notice Buy a lottery ticket with chosen numbers\n @param ticketNumbers Array of 5 unique numbers (1-99)"
+									},
+									"functionSelector": "cc957f28",
+									"id": 48,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "buyTicket",
+									"nameLocation": "1445:9:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 46,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 45,
+												"mutability": "mutable",
+												"name": "ticketNumbers",
+												"nameLocation": "1473:13:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 48,
+												"src": "1455:31:0",
+												"stateVariable": false,
+												"storageLocation": "calldata",
+												"typeDescriptions": {
+													"typeIdentifier": "t_array$_t_uint8_$5_calldata_ptr",
+													"typeString": "uint8[5]"
+												},
+												"typeName": {
+													"baseType": {
+														"id": 42,
+														"name": "uint8",
+														"nodeType": "ElementaryTypeName",
+														"src": "1455:5:0",
+														"typeDescriptions": {
+															"typeIdentifier": "t_uint8",
+															"typeString": "uint8"
+														}
+													},
+													"id": 44,
+													"length": {
+														"hexValue": "35",
+														"id": 43,
+														"isConstant": false,
+														"isLValue": false,
+														"isPure": true,
+														"kind": "number",
+														"lValueRequested": false,
+														"nodeType": "Literal",
+														"src": "1461:1:0",
+														"typeDescriptions": {
+															"typeIdentifier": "t_rational_5_by_1",
+															"typeString": "int_const 5"
+														},
+														"value": "5"
+													},
+													"nodeType": "ArrayTypeName",
+													"src": "1455:8:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_array$_t_uint8_$5_storage_ptr",
+														"typeString": "uint8[5]"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "1454:33:0"
+									},
+									"returnParameters": {
+										"id": 47,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "1504:0:0"
+									},
+									"scope": 134,
+									"src": "1436:69:0",
+									"stateMutability": "payable",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 49,
+										"nodeType": "StructuredDocumentation",
+										"src": "1511:141:0",
+										"text": "@notice Start the lottery draw process\n @dev Can only be called when minimum requirements are met and trigger conditions satisfied"
+									},
+									"functionSelector": "160344e2",
+									"id": 52,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "startLottery",
+									"nameLocation": "1666:12:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 50,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "1678:2:0"
+									},
+									"returnParameters": {
+										"id": 51,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "1689:0:0"
+									},
+									"scope": 134,
+									"src": "1657:33:0",
+									"stateMutability": "nonpayable",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 53,
+										"nodeType": "StructuredDocumentation",
+										"src": "1696:139:0",
+										"text": "@notice Finalize the lottery and select a winner\n @dev Must be called after startLottery() and after the target block is reached"
+									},
+									"functionSelector": "8e71decb",
+									"id": 56,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "findWinner",
+									"nameLocation": "1849:10:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 54,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "1859:2:0"
+									},
+									"returnParameters": {
+										"id": 55,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "1870:0:0"
+									},
+									"scope": 134,
+									"src": "1840:31:0",
+									"stateMutability": "nonpayable",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 57,
+										"nodeType": "StructuredDocumentation",
+										"src": "1877:160:0",
+										"text": "@notice Check if a user has joined the current lottery\n @param user The address to check\n @return True if the user has joined, false otherwise"
+									},
+									"functionSelector": "278a5ff2",
+									"id": 64,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "getParticipantStatus",
+									"nameLocation": "2051:20:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 60,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 59,
+												"mutability": "mutable",
+												"name": "user",
+												"nameLocation": "2080:4:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 64,
+												"src": "2072:12:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_address",
+													"typeString": "address"
+												},
+												"typeName": {
+													"id": 58,
+													"name": "address",
+													"nodeType": "ElementaryTypeName",
+													"src": "2072:7:0",
+													"stateMutability": "nonpayable",
+													"typeDescriptions": {
+														"typeIdentifier": "t_address",
+														"typeString": "address"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "2071:14:0"
+									},
+									"returnParameters": {
+										"id": 63,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 62,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 64,
+												"src": "2109:4:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_bool",
+													"typeString": "bool"
+												},
+												"typeName": {
+													"id": 61,
+													"name": "bool",
+													"nodeType": "ElementaryTypeName",
+													"src": "2109:4:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_bool",
+														"typeString": "bool"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "2108:6:0"
+									},
+									"scope": 134,
+									"src": "2042:73:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 65,
+										"nodeType": "StructuredDocumentation",
+										"src": "2121:142:0",
+										"text": "@notice Get participant's ticket information\n @param user The address to query\n @return Player struct containing ticket data"
+									},
+									"functionSelector": "bff45ed9",
+									"id": 73,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "participantsToTickets",
+									"nameLocation": "2277:21:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 68,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 67,
+												"mutability": "mutable",
+												"name": "user",
+												"nameLocation": "2316:4:0",
+												"nodeType": "VariableDeclaration",
+												"scope": 73,
+												"src": "2308:12:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_address",
+													"typeString": "address"
+												},
+												"typeName": {
+													"id": 66,
+													"name": "address",
+													"nodeType": "ElementaryTypeName",
+													"src": "2308:7:0",
+													"stateMutability": "nonpayable",
+													"typeDescriptions": {
+														"typeIdentifier": "t_address",
+														"typeString": "address"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "2298:28:0"
+									},
+									"returnParameters": {
+										"id": 72,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 71,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 73,
+												"src": "2350:13:0",
+												"stateVariable": false,
+												"storageLocation": "memory",
+												"typeDescriptions": {
+													"typeIdentifier": "t_struct$_Player_$146_memory_ptr",
+													"typeString": "struct Player"
+												},
+												"typeName": {
+													"id": 70,
+													"nodeType": "UserDefinedTypeName",
+													"pathNode": {
+														"id": 69,
+														"name": "Player",
+														"nameLocations": [
+															"2350:6:0"
+														],
+														"nodeType": "IdentifierPath",
+														"referencedDeclaration": 146,
+														"src": "2350:6:0"
+													},
+													"referencedDeclaration": 146,
+													"src": "2350:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_struct$_Player_$146_storage_ptr",
+														"typeString": "struct Player"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "2349:15:0"
+									},
+									"scope": 134,
+									"src": "2268:97:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 74,
+										"nodeType": "StructuredDocumentation",
+										"src": "2371:76:0",
+										"text": "@notice Get the contract host address\n @return The host's address"
+									},
+									"functionSelector": "f437bc59",
+									"id": 79,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "host",
+									"nameLocation": "2461:4:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 75,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "2465:2:0"
+									},
+									"returnParameters": {
+										"id": 78,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 77,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 79,
+												"src": "2491:15:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_address_payable",
+													"typeString": "address payable"
+												},
+												"typeName": {
+													"id": 76,
+													"name": "address",
+													"nodeType": "ElementaryTypeName",
+													"src": "2491:15:0",
+													"stateMutability": "payable",
+													"typeDescriptions": {
+														"typeIdentifier": "t_address_payable",
+														"typeString": "address payable"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "2490:17:0"
+									},
+									"scope": 134,
+									"src": "2452:56:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 80,
+										"nodeType": "StructuredDocumentation",
+										"src": "2514:76:0",
+										"text": "@notice Get the current prize pool\n @return The prize pool amount"
+									},
+									"functionSelector": "719ce73e",
+									"id": 85,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "prizePool",
+									"nameLocation": "2604:9:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 81,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "2613:2:0"
+									},
+									"returnParameters": {
+										"id": 84,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 83,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 85,
+												"src": "2639:6:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint32",
+													"typeString": "uint32"
+												},
+												"typeName": {
+													"id": 82,
+													"name": "uint32",
+													"nodeType": "ElementaryTypeName",
+													"src": "2639:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint32",
+														"typeString": "uint32"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "2638:8:0"
+									},
+									"scope": 134,
+									"src": "2595:52:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 86,
+										"nodeType": "StructuredDocumentation",
+										"src": "2653:67:0",
+										"text": "@notice Get the ticket cost\n @return The cost per ticket"
+									},
+									"functionSelector": "1eecd934",
+									"id": 91,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "ticketCost",
+									"nameLocation": "2734:10:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 87,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "2744:2:0"
+									},
+									"returnParameters": {
+										"id": 90,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 89,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 91,
+												"src": "2770:6:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint32",
+													"typeString": "uint32"
+												},
+												"typeName": {
+													"id": 88,
+													"name": "uint32",
+													"nodeType": "ElementaryTypeName",
+													"src": "2770:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint32",
+														"typeString": "uint32"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "2769:8:0"
+									},
+									"scope": 134,
+									"src": "2725:53:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 92,
+										"nodeType": "StructuredDocumentation",
+										"src": "2784:87:0",
+										"text": "@notice Get the block number for randomness\n @return The target block number"
+									},
+									"functionSelector": "c5150950",
+									"id": 97,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "drawBlockNumber",
+									"nameLocation": "2885:15:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 93,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "2900:2:0"
+									},
+									"returnParameters": {
+										"id": 96,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 95,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 97,
+												"src": "2926:7:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 94,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "2926:7:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "2925:9:0"
+									},
+									"scope": 134,
+									"src": "2876:59:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 98,
+										"nodeType": "StructuredDocumentation",
+										"src": "2941:90:0",
+										"text": "@notice Check if a draw has been initiated\n @return True if draw is in progress"
+									},
+									"functionSelector": "87bc3996",
+									"id": 103,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "drawInitiated",
+									"nameLocation": "3045:13:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 99,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "3058:2:0"
+									},
+									"returnParameters": {
+										"id": 102,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 101,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 103,
+												"src": "3084:4:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_bool",
+													"typeString": "bool"
+												},
+												"typeName": {
+													"id": 100,
+													"name": "bool",
+													"nodeType": "ElementaryTypeName",
+													"src": "3084:4:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_bool",
+														"typeString": "bool"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "3083:6:0"
+									},
+									"scope": 134,
+									"src": "3036:54:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 104,
+										"nodeType": "StructuredDocumentation",
+										"src": "3096:77:0",
+										"text": "@notice Get the timestamp of the last draw\n @return Unix timestamp"
+									},
+									"functionSelector": "5cbbd635",
+									"id": 109,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "lastDrawTime",
+									"nameLocation": "3187:12:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 105,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "3199:2:0"
+									},
+									"returnParameters": {
+										"id": 108,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 107,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 109,
+												"src": "3225:7:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 106,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "3225:7:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "3224:9:0"
+									},
+									"scope": 134,
+									"src": "3178:56:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 110,
+										"nodeType": "StructuredDocumentation",
+										"src": "3240:79:0",
+										"text": "@notice Get the draw interval\n @return Time in seconds between draws"
+									},
+									"functionSelector": "bc06c4cc",
+									"id": 115,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "drawInterval",
+									"nameLocation": "3333:12:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 111,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "3345:2:0"
+									},
+									"returnParameters": {
+										"id": 114,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 113,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 115,
+												"src": "3371:7:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint256",
+													"typeString": "uint256"
+												},
+												"typeName": {
+													"id": 112,
+													"name": "uint256",
+													"nodeType": "ElementaryTypeName",
+													"src": "3371:7:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint256",
+														"typeString": "uint256"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "3370:9:0"
+									},
+									"scope": 134,
+									"src": "3324:56:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 116,
+										"nodeType": "StructuredDocumentation",
+										"src": "3386:92:0",
+										"text": "@notice Get minimum participants required\n @return Minimum number of participants"
+									},
+									"functionSelector": "a54cd4f7",
+									"id": 121,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "minParticipants",
+									"nameLocation": "3492:15:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 117,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "3507:2:0"
+									},
+									"returnParameters": {
+										"id": 120,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 119,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 121,
+												"src": "3533:6:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint16",
+													"typeString": "uint16"
+												},
+												"typeName": {
+													"id": 118,
+													"name": "uint16",
+													"nodeType": "ElementaryTypeName",
+													"src": "3533:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint16",
+														"typeString": "uint16"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "3532:8:0"
+									},
+									"scope": 134,
+									"src": "3483:58:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 122,
+										"nodeType": "StructuredDocumentation",
+										"src": "3547:82:0",
+										"text": "@notice Get minimum tickets required\n @return Minimum number of tickets"
+									},
+									"functionSelector": "c59bc765",
+									"id": 127,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "minTicketsSold",
+									"nameLocation": "3643:14:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 123,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "3657:2:0"
+									},
+									"returnParameters": {
+										"id": 126,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 125,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 127,
+												"src": "3683:6:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint16",
+													"typeString": "uint16"
+												},
+												"typeName": {
+													"id": 124,
+													"name": "uint16",
+													"nodeType": "ElementaryTypeName",
+													"src": "3683:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint16",
+														"typeString": "uint16"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "3682:8:0"
+									},
+									"scope": 134,
+									"src": "3634:57:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								},
+								{
+									"documentation": {
+										"id": 128,
+										"nodeType": "StructuredDocumentation",
+										"src": "3697:93:0",
+										"text": "@notice Get maximum tickets per draw\n @return Maximum tickets before early trigger"
+									},
+									"functionSelector": "ec8f0b5b",
+									"id": 133,
+									"implemented": false,
+									"kind": "function",
+									"modifiers": [],
+									"name": "maxTicketsPerDraw",
+									"nameLocation": "3804:17:0",
+									"nodeType": "FunctionDefinition",
+									"parameters": {
+										"id": 129,
+										"nodeType": "ParameterList",
+										"parameters": [],
+										"src": "3821:2:0"
+									},
+									"returnParameters": {
+										"id": 132,
+										"nodeType": "ParameterList",
+										"parameters": [
+											{
+												"constant": false,
+												"id": 131,
+												"mutability": "mutable",
+												"name": "",
+												"nameLocation": "-1:-1:-1",
+												"nodeType": "VariableDeclaration",
+												"scope": 133,
+												"src": "3847:6:0",
+												"stateVariable": false,
+												"storageLocation": "default",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint16",
+													"typeString": "uint16"
+												},
+												"typeName": {
+													"id": 130,
+													"name": "uint16",
+													"nodeType": "ElementaryTypeName",
+													"src": "3847:6:0",
+													"typeDescriptions": {
+														"typeIdentifier": "t_uint16",
+														"typeString": "uint16"
+													}
+												},
+												"visibility": "internal"
+											}
+										],
+										"src": "3846:8:0"
+									},
+									"scope": 134,
+									"src": "3795:60:0",
+									"stateMutability": "view",
+									"virtual": false,
+									"visibility": "external"
+								}
+							],
+							"scope": 135,
+							"src": "89:3768:0",
+							"usedErrors": [],
+							"usedEvents": [
+								9,
+								16
+							]
+						}
+					],
+					"src": "32:3826:0"
+				},
+				"id": 0
+			},
+			"contract/Player.sol": {
+				"ast": {
+					"absolutePath": "contract/Player.sol",
+					"exportedSymbols": {
+						"Player": [
+							146
+						]
+					},
+					"id": 147,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 136,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".18"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "32:24:1"
+						},
+						{
+							"canonicalName": "Player",
+							"id": 146,
+							"members": [
+								{
+									"constant": false,
+									"id": 141,
+									"mutability": "mutable",
+									"name": "ticketNumbers",
+									"nameLocation": "89:13:1",
+									"nodeType": "VariableDeclaration",
+									"scope": 146,
+									"src": "78:24:1",
+									"stateVariable": false,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_array$_t_array$_t_uint8_$5_storage_$dyn_storage_ptr",
+										"typeString": "uint8[5][]"
+									},
+									"typeName": {
+										"baseType": {
+											"baseType": {
+												"id": 137,
+												"name": "uint8",
+												"nodeType": "ElementaryTypeName",
+												"src": "78:5:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint8",
+													"typeString": "uint8"
+												}
+											},
+											"id": 139,
+											"length": {
+												"hexValue": "35",
+												"id": 138,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": true,
+												"kind": "number",
+												"lValueRequested": false,
+												"nodeType": "Literal",
+												"src": "84:1:1",
+												"typeDescriptions": {
+													"typeIdentifier": "t_rational_5_by_1",
+													"typeString": "int_const 5"
+												},
+												"value": "5"
+											},
+											"nodeType": "ArrayTypeName",
+											"src": "78:8:1",
+											"typeDescriptions": {
+												"typeIdentifier": "t_array$_t_uint8_$5_storage_ptr",
+												"typeString": "uint8[5]"
+											}
+										},
+										"id": 140,
+										"nodeType": "ArrayTypeName",
+										"src": "78:10:1",
+										"typeDescriptions": {
+											"typeIdentifier": "t_array$_t_array$_t_uint8_$5_storage_$dyn_storage_ptr",
+											"typeString": "uint8[5][]"
+										}
+									},
+									"visibility": "internal"
+								},
+								{
+									"constant": false,
+									"id": 143,
+									"mutability": "mutable",
+									"name": "hasJoined",
+									"nameLocation": "113:9:1",
+									"nodeType": "VariableDeclaration",
+									"scope": 146,
+									"src": "108:14:1",
+									"stateVariable": false,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_bool",
+										"typeString": "bool"
+									},
+									"typeName": {
+										"id": 142,
+										"name": "bool",
+										"nodeType": "ElementaryTypeName",
+										"src": "108:4:1",
+										"typeDescriptions": {
+											"typeIdentifier": "t_bool",
+											"typeString": "bool"
+										}
+									},
+									"visibility": "internal"
+								},
+								{
+									"constant": false,
+									"id": 145,
+									"mutability": "mutable",
+									"name": "numberOfTickets",
+									"nameLocation": "135:15:1",
+									"nodeType": "VariableDeclaration",
+									"scope": 146,
+									"src": "128:22:1",
+									"stateVariable": false,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_uint16",
+										"typeString": "uint16"
+									},
+									"typeName": {
+										"id": 144,
+										"name": "uint16",
+										"nodeType": "ElementaryTypeName",
+										"src": "128:6:1",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint16",
+											"typeString": "uint16"
+										}
+									},
+									"visibility": "internal"
+								}
+							],
+							"name": "Player",
+							"nameLocation": "65:6:1",
+							"nodeType": "StructDefinition",
+							"scope": 147,
+							"src": "58:95:1",
+							"visibility": "public"
+						}
+					],
+					"src": "32:121:1"
+				},
+				"id": 1
+			}
+		}
+	}
+}

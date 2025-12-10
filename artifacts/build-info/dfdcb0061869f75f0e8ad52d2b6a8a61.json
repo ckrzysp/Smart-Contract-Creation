@@ -1,0 +1,200 @@
+{
+	"id": "dfdcb0061869f75f0e8ad52d2b6a8a61",
+	"_format": "hh-sol-build-info-1",
+	"solcVersion": "0.8.31",
+	"solcLongVersion": "0.8.31+commit.fd3a2265",
+	"input": {
+		"language": "Solidity",
+		"sources": {
+			"contract/Player.sol": {
+				"content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.18;\n\nstruct Player {\n    uint8[5][] ticketNumbers;\n    bool hasJoined;\n    uint16 numberOfTickets;\n}"
+			}
+		},
+		"settings": {
+			"optimizer": {
+				"enabled": false,
+				"runs": 200
+			},
+			"outputSelection": {
+				"*": {
+					"": [
+						"ast"
+					],
+					"*": [
+						"abi",
+						"metadata",
+						"devdoc",
+						"userdoc",
+						"storageLayout",
+						"evm.legacyAssembly",
+						"evm.bytecode",
+						"evm.deployedBytecode",
+						"evm.methodIdentifiers",
+						"evm.gasEstimates",
+						"evm.assembly"
+					]
+				}
+			},
+			"remappings": []
+		}
+	},
+	"output": {
+		"sources": {
+			"contract/Player.sol": {
+				"ast": {
+					"absolutePath": "contract/Player.sol",
+					"exportedSymbols": {
+						"Player": [
+							11
+						]
+					},
+					"id": 12,
+					"license": "MIT",
+					"nodeType": "SourceUnit",
+					"nodes": [
+						{
+							"id": 1,
+							"literals": [
+								"solidity",
+								"^",
+								"0.8",
+								".18"
+							],
+							"nodeType": "PragmaDirective",
+							"src": "32:24:0"
+						},
+						{
+							"canonicalName": "Player",
+							"id": 11,
+							"members": [
+								{
+									"constant": false,
+									"id": 6,
+									"mutability": "mutable",
+									"name": "ticketNumbers",
+									"nameLocation": "89:13:0",
+									"nodeType": "VariableDeclaration",
+									"scope": 11,
+									"src": "78:24:0",
+									"stateVariable": false,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_array$_t_array$_t_uint8_$5_storage_$dyn_storage_ptr",
+										"typeString": "uint8[5][]"
+									},
+									"typeName": {
+										"baseType": {
+											"baseType": {
+												"id": 2,
+												"name": "uint8",
+												"nodeType": "ElementaryTypeName",
+												"src": "78:5:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_uint8",
+													"typeString": "uint8"
+												}
+											},
+											"id": 4,
+											"length": {
+												"hexValue": "35",
+												"id": 3,
+												"isConstant": false,
+												"isLValue": false,
+												"isPure": true,
+												"kind": "number",
+												"lValueRequested": false,
+												"nodeType": "Literal",
+												"src": "84:1:0",
+												"typeDescriptions": {
+													"typeIdentifier": "t_rational_5_by_1",
+													"typeString": "int_const 5"
+												},
+												"value": "5"
+											},
+											"nodeType": "ArrayTypeName",
+											"src": "78:8:0",
+											"typeDescriptions": {
+												"typeIdentifier": "t_array$_t_uint8_$5_storage_ptr",
+												"typeString": "uint8[5]"
+											}
+										},
+										"id": 5,
+										"nodeType": "ArrayTypeName",
+										"src": "78:10:0",
+										"typeDescriptions": {
+											"typeIdentifier": "t_array$_t_array$_t_uint8_$5_storage_$dyn_storage_ptr",
+											"typeString": "uint8[5][]"
+										}
+									},
+									"visibility": "internal"
+								},
+								{
+									"constant": false,
+									"id": 8,
+									"mutability": "mutable",
+									"name": "hasJoined",
+									"nameLocation": "113:9:0",
+									"nodeType": "VariableDeclaration",
+									"scope": 11,
+									"src": "108:14:0",
+									"stateVariable": false,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_bool",
+										"typeString": "bool"
+									},
+									"typeName": {
+										"id": 7,
+										"name": "bool",
+										"nodeType": "ElementaryTypeName",
+										"src": "108:4:0",
+										"typeDescriptions": {
+											"typeIdentifier": "t_bool",
+											"typeString": "bool"
+										}
+									},
+									"visibility": "internal"
+								},
+								{
+									"constant": false,
+									"id": 10,
+									"mutability": "mutable",
+									"name": "numberOfTickets",
+									"nameLocation": "135:15:0",
+									"nodeType": "VariableDeclaration",
+									"scope": 11,
+									"src": "128:22:0",
+									"stateVariable": false,
+									"storageLocation": "default",
+									"typeDescriptions": {
+										"typeIdentifier": "t_uint16",
+										"typeString": "uint16"
+									},
+									"typeName": {
+										"id": 9,
+										"name": "uint16",
+										"nodeType": "ElementaryTypeName",
+										"src": "128:6:0",
+										"typeDescriptions": {
+											"typeIdentifier": "t_uint16",
+											"typeString": "uint16"
+										}
+									},
+									"visibility": "internal"
+								}
+							],
+							"name": "Player",
+							"nameLocation": "65:6:0",
+							"nodeType": "StructDefinition",
+							"scope": 12,
+							"src": "58:95:0",
+							"visibility": "public"
+						}
+					],
+					"src": "32:121:0"
+				},
+				"id": 0
+			}
+		}
+	}
+}

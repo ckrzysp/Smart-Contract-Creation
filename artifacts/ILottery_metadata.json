@@ -1,0 +1,534 @@
+{
+	"compiler": {
+		"version": "0.8.31+commit.fd3a2265"
+	},
+	"language": "Solidity",
+	"output": {
+		"abi": [
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "winner",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "uint64",
+						"name": "prize",
+						"type": "uint64"
+					}
+				],
+				"name": "lotterWinner",
+				"type": "event"
+			},
+			{
+				"anonymous": false,
+				"inputs": [
+					{
+						"indexed": false,
+						"internalType": "address",
+						"name": "prtcpt",
+						"type": "address"
+					},
+					{
+						"indexed": false,
+						"internalType": "string",
+						"name": "alert",
+						"type": "string"
+					}
+				],
+				"name": "participantJoined",
+				"type": "event"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint8[5]",
+						"name": "ticketNumbers",
+						"type": "uint8[5]"
+					}
+				],
+				"name": "buyTicket",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "drawBlockNumber",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "drawInitiated",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "drawInterval",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "findWinner",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "getParticipantStatus",
+				"outputs": [
+					{
+						"internalType": "bool",
+						"name": "",
+						"type": "bool"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "host",
+				"outputs": [
+					{
+						"internalType": "address payable",
+						"name": "",
+						"type": "address"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "lastDrawTime",
+				"outputs": [
+					{
+						"internalType": "uint256",
+						"name": "",
+						"type": "uint256"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "maxTicketsPerDraw",
+				"outputs": [
+					{
+						"internalType": "uint16",
+						"name": "",
+						"type": "uint16"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "minParticipants",
+				"outputs": [
+					{
+						"internalType": "uint16",
+						"name": "",
+						"type": "uint16"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "minTicketsSold",
+				"outputs": [
+					{
+						"internalType": "uint16",
+						"name": "",
+						"type": "uint16"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "address",
+						"name": "user",
+						"type": "address"
+					}
+				],
+				"name": "participantsToTickets",
+				"outputs": [
+					{
+						"components": [
+							{
+								"internalType": "uint8[5][]",
+								"name": "ticketNumbers",
+								"type": "uint8[5][]"
+							},
+							{
+								"internalType": "bool",
+								"name": "hasJoined",
+								"type": "bool"
+							},
+							{
+								"internalType": "uint16",
+								"name": "numberOfTickets",
+								"type": "uint16"
+							}
+						],
+						"internalType": "struct Player",
+						"name": "",
+						"type": "tuple"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "prizePool",
+				"outputs": [
+					{
+						"internalType": "uint32",
+						"name": "",
+						"type": "uint32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint256",
+						"name": "_interval",
+						"type": "uint256"
+					}
+				],
+				"name": "setDrawInterval",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint16",
+						"name": "_maxTickets",
+						"type": "uint16"
+					}
+				],
+				"name": "setMaxTicketsPerDraw",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint16",
+						"name": "_minParticipants",
+						"type": "uint16"
+					}
+				],
+				"name": "setMinParticipants",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [
+					{
+						"internalType": "uint16",
+						"name": "_minTickets",
+						"type": "uint16"
+					}
+				],
+				"name": "setMinTicketsSold",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "startLottery",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "ticketCost",
+				"outputs": [
+					{
+						"internalType": "uint32",
+						"name": "",
+						"type": "uint32"
+					}
+				],
+				"stateMutability": "view",
+				"type": "function"
+			}
+		],
+		"devdoc": {
+			"events": {
+				"lotterWinner(address,uint64)": {
+					"params": {
+						"prize": "The prize amount won",
+						"winner": "The address of the winner"
+					}
+				},
+				"participantJoined(address,string)": {
+					"params": {
+						"alert": "Alert message",
+						"prtcpt": "The address of the participant"
+					}
+				}
+			},
+			"kind": "dev",
+			"methods": {
+				"buyTicket(uint8[5])": {
+					"params": {
+						"ticketNumbers": "Array of 5 unique numbers (1-99)"
+					}
+				},
+				"drawBlockNumber()": {
+					"returns": {
+						"_0": "The target block number"
+					}
+				},
+				"drawInitiated()": {
+					"returns": {
+						"_0": "True if draw is in progress"
+					}
+				},
+				"drawInterval()": {
+					"returns": {
+						"_0": "Time in seconds between draws"
+					}
+				},
+				"findWinner()": {
+					"details": "Must be called after startLottery() and after the target block is reached"
+				},
+				"getParticipantStatus(address)": {
+					"params": {
+						"user": "The address to check"
+					},
+					"returns": {
+						"_0": "True if the user has joined, false otherwise"
+					}
+				},
+				"host()": {
+					"returns": {
+						"_0": "The host's address"
+					}
+				},
+				"lastDrawTime()": {
+					"returns": {
+						"_0": "Unix timestamp"
+					}
+				},
+				"maxTicketsPerDraw()": {
+					"returns": {
+						"_0": "Maximum tickets before early trigger"
+					}
+				},
+				"minParticipants()": {
+					"returns": {
+						"_0": "Minimum number of participants"
+					}
+				},
+				"minTicketsSold()": {
+					"returns": {
+						"_0": "Minimum number of tickets"
+					}
+				},
+				"participantsToTickets(address)": {
+					"params": {
+						"user": "The address to query"
+					},
+					"returns": {
+						"_0": "Player struct containing ticket data"
+					}
+				},
+				"prizePool()": {
+					"returns": {
+						"_0": "The prize pool amount"
+					}
+				},
+				"setDrawInterval(uint256)": {
+					"params": {
+						"_interval": "New interval in seconds (must be between 1-30 days)"
+					}
+				},
+				"setMaxTicketsPerDraw(uint16)": {
+					"params": {
+						"_maxTickets": "New maximum (must be >= minTicketsSold)"
+					}
+				},
+				"setMinParticipants(uint16)": {
+					"params": {
+						"_minParticipants": "New minimum (must be between 2-100)"
+					}
+				},
+				"setMinTicketsSold(uint16)": {
+					"params": {
+						"_minTickets": "New minimum (must be >= minParticipants)"
+					}
+				},
+				"startLottery()": {
+					"details": "Can only be called when minimum requirements are met and trigger conditions satisfied"
+				},
+				"ticketCost()": {
+					"returns": {
+						"_0": "The cost per ticket"
+					}
+				}
+			},
+			"version": 1
+		},
+		"userdoc": {
+			"events": {
+				"lotterWinner(address,uint64)": {
+					"notice": "Emitted when a winner is selected"
+				},
+				"participantJoined(address,string)": {
+					"notice": "Emitted when a participant joins the lottery"
+				}
+			},
+			"kind": "user",
+			"methods": {
+				"buyTicket(uint8[5])": {
+					"notice": "Buy a lottery ticket with chosen numbers"
+				},
+				"drawBlockNumber()": {
+					"notice": "Get the block number for randomness"
+				},
+				"drawInitiated()": {
+					"notice": "Check if a draw has been initiated"
+				},
+				"drawInterval()": {
+					"notice": "Get the draw interval"
+				},
+				"findWinner()": {
+					"notice": "Finalize the lottery and select a winner"
+				},
+				"getParticipantStatus(address)": {
+					"notice": "Check if a user has joined the current lottery"
+				},
+				"host()": {
+					"notice": "Get the contract host address"
+				},
+				"lastDrawTime()": {
+					"notice": "Get the timestamp of the last draw"
+				},
+				"maxTicketsPerDraw()": {
+					"notice": "Get maximum tickets per draw"
+				},
+				"minParticipants()": {
+					"notice": "Get minimum participants required"
+				},
+				"minTicketsSold()": {
+					"notice": "Get minimum tickets required"
+				},
+				"participantsToTickets(address)": {
+					"notice": "Get participant's ticket information"
+				},
+				"prizePool()": {
+					"notice": "Get the current prize pool"
+				},
+				"setDrawInterval(uint256)": {
+					"notice": "Update the draw interval (time between draws)"
+				},
+				"setMaxTicketsPerDraw(uint16)": {
+					"notice": "Update the maximum tickets per draw (triggers early draw)"
+				},
+				"setMinParticipants(uint16)": {
+					"notice": "Update the minimum number of participants required"
+				},
+				"setMinTicketsSold(uint16)": {
+					"notice": "Update the minimum number of tickets required"
+				},
+				"startLottery()": {
+					"notice": "Start the lottery draw process"
+				},
+				"ticketCost()": {
+					"notice": "Get the ticket cost"
+				}
+			},
+			"version": 1
+		}
+	},
+	"settings": {
+		"compilationTarget": {
+			"contract/ILottery.sol": "ILottery"
+		},
+		"evmVersion": "osaka",
+		"libraries": {},
+		"metadata": {
+			"bytecodeHash": "ipfs"
+		},
+		"optimizer": {
+			"enabled": false,
+			"runs": 200
+		},
+		"remappings": []
+	},
+	"sources": {
+		"contract/ILottery.sol": {
+			"keccak256": "0x2aa53f85de5735f20291d37c164248ac91e8e5680857a4970ccb22a2d7809bf8",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://46cc36eb0b010dfbe8ad390c6ec9ee01391538e2f5a6b6c3b121bfe2412bca32",
+				"dweb:/ipfs/QmfBFr1WpnkTiPeQehspr3qEgGfuj95m4GnHW3tDjq2BmN"
+			]
+		},
+		"contract/Player.sol": {
+			"keccak256": "0xa3f6657712a386df24584ea143d440e8c083c13763cecbc95ff78773256f2537",
+			"license": "MIT",
+			"urls": [
+				"bzz-raw://66395884570cb50da93770cb2a140661e7ce19452486999d65df4ee44f4a9ed4",
+				"dweb:/ipfs/QmQZLdVtNov1e3v5QzhQ9BgaMamGizE38MZAoBDDC5iNJy"
+			]
+		}
+	},
+	"version": 1
+}

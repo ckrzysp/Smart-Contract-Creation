@@ -1,0 +1,365 @@
+{
+	"deploy": {
+		"VM:-": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"main:1": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"sepolia:11155111": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		},
+		"Custom": {
+			"linkReferences": {},
+			"autoDeployLib": true
+		}
+	},
+	"data": {
+		"bytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"deployedBytecode": {
+			"functionDebugData": {},
+			"generatedSources": [],
+			"immutableReferences": {},
+			"linkReferences": {},
+			"object": "",
+			"opcodes": "",
+			"sourceMap": ""
+		},
+		"gasEstimates": null,
+		"methodIdentifiers": {
+			"buyTicket(uint8[5])": "cc957f28",
+			"drawBlockNumber()": "c5150950",
+			"drawInitiated()": "87bc3996",
+			"drawInterval()": "bc06c4cc",
+			"findWinner()": "8e71decb",
+			"getParticipantStatus(address)": "278a5ff2",
+			"host()": "f437bc59",
+			"lastDrawTime()": "5cbbd635",
+			"maxTicketsPerDraw()": "ec8f0b5b",
+			"minParticipants()": "a54cd4f7",
+			"minTicketsSold()": "c59bc765",
+			"participantsToTickets(address)": "bff45ed9",
+			"prizePool()": "719ce73e",
+			"setDrawInterval(uint256)": "f5a9d5bb",
+			"setMaxTicketsPerDraw(uint16)": "63ed426d",
+			"setMinParticipants(uint16)": "dabc4000",
+			"setMinTicketsSold(uint16)": "7535d791",
+			"startLottery()": "160344e2",
+			"ticketCost()": "1eecd934"
+		}
+	},
+	"abi": [
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "winner",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "uint64",
+					"name": "prize",
+					"type": "uint64"
+				}
+			],
+			"name": "lotterWinner",
+			"type": "event"
+		},
+		{
+			"anonymous": false,
+			"inputs": [
+				{
+					"indexed": false,
+					"internalType": "address",
+					"name": "prtcpt",
+					"type": "address"
+				},
+				{
+					"indexed": false,
+					"internalType": "string",
+					"name": "alert",
+					"type": "string"
+				}
+			],
+			"name": "participantJoined",
+			"type": "event"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint8[5]",
+					"name": "ticketNumbers",
+					"type": "uint8[5]"
+				}
+			],
+			"name": "buyTicket",
+			"outputs": [],
+			"stateMutability": "payable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "drawBlockNumber",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "drawInitiated",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "drawInterval",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "findWinner",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "user",
+					"type": "address"
+				}
+			],
+			"name": "getParticipantStatus",
+			"outputs": [
+				{
+					"internalType": "bool",
+					"name": "",
+					"type": "bool"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "host",
+			"outputs": [
+				{
+					"internalType": "address payable",
+					"name": "",
+					"type": "address"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "lastDrawTime",
+			"outputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "maxTicketsPerDraw",
+			"outputs": [
+				{
+					"internalType": "uint16",
+					"name": "",
+					"type": "uint16"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "minParticipants",
+			"outputs": [
+				{
+					"internalType": "uint16",
+					"name": "",
+					"type": "uint16"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "minTicketsSold",
+			"outputs": [
+				{
+					"internalType": "uint16",
+					"name": "",
+					"type": "uint16"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "user",
+					"type": "address"
+				}
+			],
+			"name": "participantsToTickets",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "uint8[5][]",
+							"name": "ticketNumbers",
+							"type": "uint8[5][]"
+						},
+						{
+							"internalType": "bool",
+							"name": "hasJoined",
+							"type": "bool"
+						},
+						{
+							"internalType": "uint16",
+							"name": "numberOfTickets",
+							"type": "uint16"
+						}
+					],
+					"internalType": "struct Player",
+					"name": "",
+					"type": "tuple"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "prizePool",
+			"outputs": [
+				{
+					"internalType": "uint32",
+					"name": "",
+					"type": "uint32"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "_interval",
+					"type": "uint256"
+				}
+			],
+			"name": "setDrawInterval",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint16",
+					"name": "_maxTickets",
+					"type": "uint16"
+				}
+			],
+			"name": "setMaxTicketsPerDraw",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint16",
+					"name": "_minParticipants",
+					"type": "uint16"
+				}
+			],
+			"name": "setMinParticipants",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint16",
+					"name": "_minTickets",
+					"type": "uint16"
+				}
+			],
+			"name": "setMinTicketsSold",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "startLottery",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [],
+			"name": "ticketCost",
+			"outputs": [
+				{
+					"internalType": "uint32",
+					"name": "",
+					"type": "uint32"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
+	]
+}
