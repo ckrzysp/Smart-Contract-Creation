@@ -49,12 +49,15 @@ contract Lottery is ILottery {
 
     event ParticipantJoined(address participant, string alert); // Event that alerts them when they join
     event LotteryWinner(address winner, uint64 prize); // Event that alerts when there is a lottery winner
+    event PrizeClaimed(address winner, uint256 amount); // Event when a winner claims their prize
 
     // Randomness & Draw State
     uint256 public drawBlockNumber; // Block we'll use later for randomness
     bool public drawInitiated = false; // Stops someone from starting the draw twice
     bool public ended = false; // Prevents double payout
     uint256 public lastDrawTime = 0; // When the last draw happened (0 means never)
+
+    mapping(address => uint256) public claimableWinnings; // Track how much each winner can claim
 
     // Trigger Parameters
     uint256 public drawInterval; // Maximum time between draws
@@ -181,7 +184,8 @@ contract Lottery is ILottery {
         // Check if either trigger condition is met:
         // 1. Time-based: drawInterval has passed, OR
         // 2. Ticket-based: maxTicketsPerDraw reached
-        bool timeConditionMet = (lastDrawTime == 0) || (block.timestamp >= lastDrawTime + drawInterval);
+        bool timeConditionMet = (lastDrawTime == 0) ||
+            (block.timestamp >= lastDrawTime + drawInterval);
         bool ticketCapReached = totalTickets >= maxTicketsPerDraw;
 
         require(
@@ -201,7 +205,8 @@ contract Lottery is ILottery {
         lastDrawTime = block.timestamp;
     }
 
-    // Function to finalize the lottery and pick a winner
+    // Function to finalize the lottery and determine winners
+    // Winners must call claimPrize() to withdraw their winnings
     function findWinner() external {
         // Can't finish something we didn't start
         require(drawInitiated, "Draw not initiated.");
@@ -231,7 +236,9 @@ contract Lottery is ILottery {
 
         uint8[5] memory winningNumbers;
         for (uint256 i = 0; i < 5; i++) {
-            winningNumbers[i] = uint8((uint256(keccak256(abi.encodePacked(randomSeed, i))) % 99) + 1);
+            winningNumbers[i] = uint8(
+                (uint256(keccak256(abi.encodePacked(randomSeed, i))) % 99) + 1
+            );
         }
 
         // Get all players
@@ -252,15 +259,15 @@ contract Lottery is ILottery {
         // SAFETY: Lock the lottery so no second payout happens
         ended = true;
 
-        // Pay all winners
+        // Instead of transferring, mark winnings as claimable (for gas savings)
         if (winners.length > 0) {
             for (uint256 i = 0; i < winners.length; i++) {
-                payable(winners[i]).transfer(amountPerWinner);
+                claimableWinnings[winners[i]] += amountPerWinner;
                 emit LotteryWinner(winners[i], uint64(amountPerWinner));
             }
         }
 
-        // Reset state for next round
+        // Reset state for next round (but don't reset claimableWinnings, winners need to claim)
         prizePool = 0;
         totalTickets = 0;
         drawInitiated = false;
@@ -271,6 +278,20 @@ contract Lottery is ILottery {
             delete participantsToTickets[participantAddresses[i]];
         }
         delete participantAddresses;
+    }
+
+    // Winners call this to claim their prize (pull payment pattern)
+    function claimPrize() external {
+        uint256 amount = claimableWinnings[msg.sender];
+        require(amount > 0, "No winnings to claim");
+
+        // Clear their winnings before transfer
+        claimableWinnings[msg.sender] = 0;
+
+        (bool success, ) = payable(msg.sender).call{value: amount}("");
+        require(success, "Prize transfer failed");
+
+        emit PrizeClaimed(msg.sender, amount);
     }
 
     /// Checks if a user is signed up for the lottery.
