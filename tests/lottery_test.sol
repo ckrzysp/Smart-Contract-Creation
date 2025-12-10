@@ -8,42 +8,55 @@ import "../contract/Lottery.sol";
 
 contract LotteryTesting {
     Lottery lottery;
-    address payable owner;
-    address participant;
+    address participant1;
+    address participant2;
+    
+    receive() external payable {}
+    fallback() external payable { }
 
-    // Being a new lottery
-    function beforeEach() public {
-        owner = payable(TestsAccounts.getAccount(0)); // Set owner
-        participant = TestsAccounts.getAccount(1);
-        lottery = new Lottery(20, 2, 2, 2);
+    // Run before every test function
+    function beforeAll() public {
+        participant1 = TestsAccounts.getAccount(1);
+        participant2 = TestsAccounts.getAccount(2);
     }
 
+    function beforeEach() public {
+        // Draw interval, min prtcpts, max prtcpts, max ticket per
+        lottery = new Lottery(2 days, 2, 2, 10);
+    }
+    
     // Check ownership
     function testHostIsOwner() public {
-        Assert.equal(lottery.host(), owner, "Owner is not set correctly.");
+        Assert.equal(lottery.host(), address(this), "Owner is not set correctly.");
     }
-
+    
     // Check ticket logic
-    function testBuyIn() public {
-        lottery.buyTicket{value: 0.015 ether}([3, 42, 90, 81, 49]);
-        Assert.equal(lottery.getParticipantStatus(participant), true, "A ticket was not bought/insufficient funds.");
+    // Had to add this in wei, otherwise wouldn't work
+    /// #value: 15000000000000000
+    function testBuyIn() public payable {
+        // Send value with the transaction
+        Assert.equal(lottery.getParticipantStatus(address(this)), false, "A ticket was not bought/insufficient");
     }
-
+    
     // Check the prize pool amount
     function testPrizePool() public {
         uint256 result = 1;
+        lottery.buyTicket{value: 0.015 ether}([1, 2, 3, 4, 5]);
+        Assert.equal(lottery.getParticipantStatus(address(this)), true, "A ticket was not bought/insufficient");
         Assert.ok(lottery.prizePool() > result, "Prize pool has no money.");
     }
-
-    // Check to see if the draw has started
-    function testStartLottery() public {
+    
+    // Check to see if the pool was emptied
+    function testClaimPrize() public {
         lottery.startLottery();
         Assert.equal(lottery.drawInitiated(), true, "The lottery has not started.");
-    }
-
-    // Check to see if the the pool was emptied 
-    function testWinning() public {
         lottery.findWinner();
-        Assert.ok(lottery.prizePool() < 1, "Prize pool was not given away");
+        lottery.claimPrize();
+        Assert.ok(lottery.prizePool() < 1, "Prize pool was given away");
+    }
+    
+    // Test start lottery
+    function testStartLotteryPermission() public {
+        Assert.equal(lottery.host(), address(this), "Only owner can start lottery");
     }
 }

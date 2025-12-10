@@ -378,6 +378,10 @@
 				],
 				"stateMutability": "view",
 				"type": "function"
+			},
+			{
+				"stateMutability": "payable",
+				"type": "receive"
 			}
 		],
 		"devdoc": {
@@ -623,11 +627,11 @@
 			]
 		},
 		"contract/Lottery.sol": {
-			"keccak256": "0x0b7d99db802e16d9ea100448681a8e9f46c38bc549a6ac04afb18b2407bdd53b",
+			"keccak256": "0xf1ffb97b2e36e0c5bcbe4fe93952c5ec2a56920cca43e52f86ce16be3cb741ac",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://e72eb19f7a5d0fafbe4a8b1a3ae0cfc012a0b7d75bf56a8b3bb98e8129f54a71",
-				"dweb:/ipfs/QmTnru1Qe1T26RC9vgKjhhxHTmozxMTxbASYHPHBuUUpVj"
+				"bzz-raw://ce197da5b183230b9c7b5ab40dada08597ea52e48c1fd66ec95266989db8f97e",
+				"dweb:/ipfs/QmW5xMnokPwiFNDRxZkE2mTHntYPt7jaCpcYULuUJnpt6w"
 			]
 		},
 		"contract/Player.sol": {

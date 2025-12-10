@@ -6,6 +6,17 @@
 	"output": {
 		"abi": [
 			{
+				"stateMutability": "payable",
+				"type": "fallback"
+			},
+			{
+				"inputs": [],
+				"name": "beforeAll",
+				"outputs": [],
+				"stateMutability": "nonpayable",
+				"type": "function"
+			},
+			{
 				"inputs": [],
 				"name": "beforeEach",
 				"outputs": [],
@@ -15,6 +26,13 @@
 			{
 				"inputs": [],
 				"name": "testBuyIn",
+				"outputs": [],
+				"stateMutability": "payable",
+				"type": "function"
+			},
+			{
+				"inputs": [],
+				"name": "testClaimPrize",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
@@ -35,17 +53,14 @@
 			},
 			{
 				"inputs": [],
-				"name": "testStartLottery",
+				"name": "testStartLotteryPermission",
 				"outputs": [],
 				"stateMutability": "nonpayable",
 				"type": "function"
 			},
 			{
-				"inputs": [],
-				"name": "testWinning",
-				"outputs": [],
-				"stateMutability": "nonpayable",
-				"type": "function"
+				"stateMutability": "payable",
+				"type": "receive"
 			}
 		],
 		"devdoc": {
@@ -55,7 +70,11 @@
 		},
 		"userdoc": {
 			"kind": "user",
-			"methods": {},
+			"methods": {
+				"testBuyIn()": {
+					"notice": "#value: 15000000000000000"
+				}
+			},
 			"version": 1
 		}
 	},
@@ -116,11 +135,11 @@
 			]
 		},
 		"tests/lottery_test.sol": {
-			"keccak256": "0x05794489ed35e8dab98f26ee4c2f5f4209e0e8234e06c51488ccf6f801961edc",
+			"keccak256": "0xfe8b18de34a6ec87d854d12d78b3a2fbe96a1f6ef36a0d0dc2ad74b7169a165c",
 			"license": "MIT",
 			"urls": [
-				"bzz-raw://498c83c389f402ffd2e8527707ff9f790fb96a7e32456a458318f9fc31708a96",
-				"dweb:/ipfs/Qmf5DsnVi2vDktkjVfsJhSLShzADyW2ADdPi86DgCLi3vZ"
+				"bzz-raw://e121468eb3534b1901a8a7f59e2d9c11fa47f0c0cad5fface4090b5b23ad72ef",
+				"dweb:/ipfs/QmebsCCGBDQmyyH4xkfui3J8JmAsXpwpxXRPi87v7Jeojk"
 			]
 		},
 		"utils/Utils.sol": {
