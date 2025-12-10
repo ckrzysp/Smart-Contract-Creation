@@ -43,12 +43,12 @@ contract Lottery is ILottery {
     address payable public host;
 
     uint256 public prizePool = 0;
-    uint256 hostCut = 0;
+    uint256 private hostCut = 0;
     uint256 public ticketCost = 0.015 ether;
-    uint256 hostTicketFee = ticketCost * 0.20; // Host takes a 20% cut from each ticket. the remaining 80% is for prize money
+    uint256 private hostTicketFee = ticketCost * 0.20; // Host takes a 20% cut from each ticket. the remaining 80% is for prize money
 
-    event participantJoined(address prtcpt, string alert); // Event that alerts them when they join
-    event lotterWinner(address winner, uint64 prize); // Event that alerts when there is a lottery winner
+    event ParticipantJoined(address participant, string alert); // Event that alerts them when they join
+    event LotteryWinner(address winner, uint64 prize); // Event that alerts when there is a lottery winner
 
     // Randomness & Draw State
     uint256 public drawBlockNumber; // Block we'll use later for randomness
@@ -128,24 +128,6 @@ contract Lottery is ILottery {
         maxTicketsPerDraw = _maxTickets;
     }
 
-    // Check that all 5 numbers are unique and in range 1 -> 99
-    function validateTicketNumbers(
-        uint8[5] calldata ticketNumbers
-    ) internal pure {
-        for (uint256 i = 0; i < 5; i++) {
-            require(
-                ticketNumbers[i] >= 1 && ticketNumbers[i] <= 99,
-                "Out of range"
-            );
-            for (uint256 j = i + 1; j < 5; j++) {
-                require(
-                    ticketNumbers[i] != ticketNumbers[j],
-                    "Duplicate in ticket"
-                );
-            }
-        }
-    }
-
     /*
      *  buyTicket
      *  Allows a user to join the lottery by buying a ticket
@@ -178,7 +160,7 @@ contract Lottery is ILottery {
 
         totalTickets += 1;
 
-        emit participantJoined(msg.sender, "joined");
+        emit ParticipantJoined(msg.sender, "joined");
     }
 
     // Start the lottery draw
@@ -274,7 +256,7 @@ contract Lottery is ILottery {
         if (winners.length > 0) {
             for (uint256 i = 0; i < winners.length; i++) {
                 payable(winners[i]).transfer(amountPerWinner);
-                emit lotterWinner(winners[i], uint64(amountPerWinner));
+                emit LotteryWinner(winners[i], uint64(amountPerWinner));
             }
         }
 
@@ -298,6 +280,24 @@ contract Lottery is ILottery {
     /// @return bool Returns true if the user has joined, false otherwise.
     function getParticipantStatus(address user) public view returns (bool) {
         return participantsToTickets[user].hasJoined;
+    }
+
+    // Check that all 5 numbers are unique and in range 1 -> 99
+    function validateTicketNumbers(
+        uint8[5] calldata ticketNumbers
+    ) internal pure {
+        for (uint256 i = 0; i < 5; i++) {
+            require(
+                ticketNumbers[i] >= 1 && ticketNumbers[i] <= 99,
+                "Out of range"
+            );
+            for (uint256 j = i + 1; j < 5; j++) {
+                require(
+                    ticketNumbers[i] != ticketNumbers[j],
+                    "Duplicate in ticket"
+                );
+            }
+        }
     }
 
     /// Replaced the for loop in getParticipant with a direct mapping lookup. The old method got slower as more participants joined, so this keeps it fast regardless of size.
