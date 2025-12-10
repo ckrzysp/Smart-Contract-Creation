@@ -12,7 +12,7 @@ contract LotteryTesting {
     address participant2;
     
     receive() external payable {}
-    fallback() external payable { }
+    fallback() external payable {}
 
     // Run before every test function
     function beforeAll() public {
