@@ -5,9 +5,9 @@ import "contract/Player.sol";
 
 function determinePrizes(
     uint256 totalPrizePool,
-    uint8[5] calldata winningNumbers,
-    address[] calldata addresses,
-    Player[] calldata players
+    uint8[5] memory winningNumbers,
+    address[] memory addresses,
+    Player[] memory players
 ) pure returns (address[] memory winners, uint256 winAmount) {
     require(addresses.length == players.length, "Length mismatch");
 
@@ -18,7 +18,7 @@ function determinePrizes(
         uint256 n = players[i].numberOfTickets;
 
         for (uint256 j = 0; j < n; j++) {  // for each ticket the current player has
-            uint8[5] calldata ticket = players[i].ticketNumbers[j];
+            uint8[5] memory ticket = players[i].ticketNumbers[j];
 
             bool isJackpotWinner = true;
             for (uint8 x = 0; x < 5; x++) {

@@ -29,27 +29,22 @@ pragma solidity ^0.8.18;
 /// All parameters are set in the constructor and can be adjusted by the host over time.
 
 import "contract/Player.sol";
-import "contract/Interface.sol";
+import "contract/ILottery.sol";
 import "utils/Utils.sol";
 
 /// Lottery with immutability.
 contract Lottery is ILottery {
     // A dictionary of an address to the tickets it has purchased in the current iteration of the lottery.
-    mapping(address => Player) public participantsToTickets =
-        new mapping(address => Player);
+    mapping(address => Player) public participantsToTickets;
     uint16 private totalTickets = 0;
-    address[] participantAddresses = new address[];
+    address[] participantAddresses;
 
     address payable public host;
 
     uint256 public prizePool = 0;
     uint256 private hostCut = 0;
     uint256 public ticketCost = 0.015 ether;
-    uint256 private hostTicketFee = ticketCost * 0.20; // Host takes a 20% cut from each ticket. the remaining 80% is for prize money
-
-    event ParticipantJoined(address participant, string alert); // Event that alerts them when they join
-    event LotteryWinner(address winner, uint64 prize); // Event that alerts when there is a lottery winner
-    event PrizeClaimed(address winner, uint256 amount); // Event when a winner claims their prize
+    uint256 private hostTicketFee = (ticketCost * 20) / 100; // Host takes a 20% cut from each ticket. the remaining 80% is for prize money
 
     // Randomness & Draw State
     uint256 public drawBlockNumber; // Block we'll use later for randomness

@@ -5,14 +5,19 @@ import "contract/Player.sol";
 
 interface ILottery {
     /// @notice Emitted when a participant joins the lottery
-    /// @param prtcpt The address of the participant
+    /// @param participant The address of the participant
     /// @param alert Alert message
-    event participantJoined(address prtcpt, string alert);
+    event ParticipantJoined(address participant, string alert);
 
     /// @notice Emitted when a winner is selected
     /// @param winner The address of the winner
     /// @param prize The prize amount won
-    event lotterWinner(address winner, uint64 prize);
+    event LotteryWinner(address winner, uint64 prize);
+
+    /// @notice Emitted when a winner claims their prize
+    /// @param winner The address of the winner
+    /// @param amount The amount claimed
+    event PrizeClaimed(address winner, uint256 amount);
 
     /// @notice Update the draw interval (time between draws)
     /// @param _interval New interval in seconds (must be between 1-30 days)
@@ -42,17 +47,19 @@ interface ILottery {
     /// @dev Must be called after startLottery() and after the target block is reached
     function findWinner() external;
 
+    /// @notice Claim your prize winnings
+    /// @dev Winners must call this to withdraw their winnings (pull payment pattern)
+    function claimPrize() external;
+
     /// @notice Check if a user has joined the current lottery
     /// @param user The address to check
     /// @return True if the user has joined, false otherwise
     function getParticipantStatus(address user) external view returns (bool);
 
-    /// @notice Get participant's ticket information
-    /// @param user The address to query
-    /// @return Player struct containing ticket data
-    function participantsToTickets(
-        address user
-    ) external view returns (Player memory);
+    /// @notice Get the claimable winnings for an address
+    /// @param user The address to check
+    /// @return The amount of ETH claimable
+    function claimableWinnings(address user) external view returns (uint256);
 
     /// @notice Get the contract host address
     /// @return The host's address
@@ -60,11 +67,11 @@ interface ILottery {
 
     /// @notice Get the current prize pool
     /// @return The prize pool amount
-    function prizePool() external view returns (uint32);
+    function prizePool() external view returns (uint256);
 
     /// @notice Get the ticket cost
     /// @return The cost per ticket
-    function ticketCost() external view returns (uint32);
+    function ticketCost() external view returns (uint256);
 
     /// @notice Get the block number for randomness
     /// @return The target block number
